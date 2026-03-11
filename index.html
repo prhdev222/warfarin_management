@@ -16,6 +16,37 @@
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
       }
+
+      @page {
+        size: A4;
+        margin: 12mm;
+      }
+
+      @media print {
+        body {
+          background: #ffffff;
+          color: #000000;
+        }
+        #root {
+          background: #ffffff;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .print-page {
+          box-shadow: none !important;
+          background: #ffffff !important;
+          color: #000000 !important;
+        }
+        .print-page * {
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+        .print-page a {
+          color: #000000 !important;
+          text-decoration: none;
+        }
+      }
     </style>
   </head>
   <body>

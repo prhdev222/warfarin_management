@@ -307,6 +307,10 @@ export default function WarfarinCalculator() {
 
   const fontScale = fontMode === "normal" ? 1 : fontMode === "large" ? 1.18 : 1.3;
 
+  const handlePrintCountSummary = () => {
+    window.print();
+  };
+
   const filteredDrugs = useMemo(() => {
     if (!drugSearch.trim()) return [];
     const q = drugSearch.toLowerCase().trim();
@@ -498,7 +502,7 @@ export default function WarfarinCalculator() {
       )}
 
       {/* Header + Nav */}
-      <div>
+      <div className="no-print">
         <div style={{
           background: "linear-gradient(135deg, #1A365D 0%, #2B5EA7 60%, #1A365D 100%)",
           padding: "18px 16px 12px", borderBottom: "2px solid rgba(100,181,246,0.35)",
@@ -639,7 +643,7 @@ export default function WarfarinCalculator() {
         </div>
       </div>
 
-      <div style={{
+      <div className="print-page" style={{
         maxWidth: 560,
         margin: "0 auto",
         padding: "14px 12px 50px",
@@ -648,34 +652,36 @@ export default function WarfarinCalculator() {
         width: `${100 / fontScale}%`,
       }}>
 
-        {/* Tablet Select — show only in วางแผน & นับเม็ด */}
+        {/* Tablet Select — show onlyในหน้าจอ (ไม่พิมพ์) */}
         {(tab === "plan" || tab === "count") && (
-          <Card>
-            <Label icon="🏥" text="เม็ดยาที่มีในโรงพยาบาล" />
-            <div style={{ display: "flex", gap: 6 }}>
-              {ALL_TABLETS.map(mg => {
-                const on = tablets.includes(mg);
-                const pc = PILL_COLORS[mg];
-                return (
-                  <button key={mg} onClick={() => toggleTab(mg)} style={{
-                    flex: 1, padding: "8px 2px", borderRadius: 12, cursor: "pointer",
-                    border: `2px solid ${on ? TC[mg] : "rgba(255,255,255,0.08)"}`,
-                    background: on ? `${TC[mg]}15` : "rgba(255,255,255,0.02)",
-                    color: on ? "#FFF" : "#4A5A6A", fontFamily: "inherit",
-                    fontWeight: 700, fontSize: 13, transition: "all 0.2s",
-                    display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
-                  }}>
-                    <PillDot mg={mg} on={on} />
-                    <span>{mg} mg</span>
-                    <span style={{ fontSize: 9, fontWeight: 400, color: on ? pc.stroke : "#4A5A6A" }}>
-                      {pc.label}
-                    </span>
-                    <span style={{ fontSize: 9, fontWeight: 400, opacity: .7 }}>{on ? "✓ มี" : "ไม่มี"}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </Card>
+          <div className="no-print">
+            <Card>
+              <Label icon="🏥" text="เม็ดยาที่มีในโรงพยาบาล" />
+              <div style={{ display: "flex", gap: 6 }}>
+                {ALL_TABLETS.map(mg => {
+                  const on = tablets.includes(mg);
+                  const pc = PILL_COLORS[mg];
+                  return (
+                    <button key={mg} onClick={() => toggleTab(mg)} style={{
+                      flex: 1, padding: "8px 2px", borderRadius: 12, cursor: "pointer",
+                      border: `2px solid ${on ? TC[mg] : "rgba(255,255,255,0.08)"}`,
+                      background: on ? `${TC[mg]}15` : "rgba(255,255,255,0.02)",
+                      color: on ? "#FFF" : "#4A5A6A", fontFamily: "inherit",
+                      fontWeight: 700, fontSize: 13, transition: "all 0.2s",
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
+                    }}>
+                      <PillDot mg={mg} on={on} />
+                      <span>{mg} mg</span>
+                      <span style={{ fontSize: 9, fontWeight: 400, color: on ? pc.stroke : "#4A5A6A" }}>
+                        {pc.label}
+                      </span>
+                      <span style={{ fontSize: 9, fontWeight: 400, opacity: .7 }}>{on ? "✓ มี" : "ไม่มี"}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </Card>
+          </div>
         )}
 
         {/* ═══════════ PLAN TAB ═══════════ */}
@@ -1036,36 +1042,39 @@ export default function WarfarinCalculator() {
         {/* ═══════════ COUNT TAB ═══════════ */}
         {tab === "count" && (<>
 
-          <Card>
-            <Label icon="📆" text="ระยะเวลาถึงนัดครั้งหน้า" />
-            <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 10 }}>
-              {[7, 14, 21, 28, 30, 42, 56, 60, 90].map(d => (
-                <button key={d} onClick={() => setAppointDays(d)} style={{
-                  padding: "7px 11px", borderRadius: 10, cursor: "pointer",
-                  border: appointDays === d ? "2px solid #64B5F6" : "1px solid rgba(255,255,255,0.08)",
-                  background: appointDays === d ? "rgba(100,181,246,0.15)" : "rgba(255,255,255,0.02)",
-                  color: appointDays === d ? "#FFF" : "#5A7A9A",
-                  fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 600,
-                  lineHeight: 1.3,
-                }}>
-                  {d} <span style={{ fontSize: 10 }}>วัน</span>
-                  {d >= 7 && <div style={{ fontSize: 9, color: "#4A5A6A" }}>({(d / 7).toFixed(d % 7 === 0 ? 0 : 1)} wk)</div>}
-                </button>
-              ))}
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ fontSize: 12, color: "#6A8AAB" }}>กำหนดเอง:</span>
-              <input type="number" min={1} max={365} value={appointDays}
-                onChange={e => setAppointDays(Math.max(1, parseInt(e.target.value) || 1))}
-                style={{
-                  width: 65, padding: "6px 8px", borderRadius: 8, textAlign: "center",
-                  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
-                  color: "#FFF", fontFamily: "'JetBrains Mono', monospace", fontSize: 14,
-                }}
-              />
-              <span style={{ fontSize: 12, color: "#6A8AAB" }}>วัน</span>
-            </div>
-          </Card>
+          {/* ระยะเวลาถึงนัดครั้งหน้า — แสดงเฉพาะบนหน้าจอ ไม่พิมพ์ */}
+          <div className="no-print">
+            <Card>
+              <Label icon="📆" text="ระยะเวลาถึงนัดครั้งหน้า" />
+              <div style={{ display: "flex", gap: 5, flexWrap: "wrap", marginBottom: 10 }}>
+                {[7, 14, 21, 28, 30, 42, 56, 60, 90].map(d => (
+                  <button key={d} onClick={() => setAppointDays(d)} style={{
+                    padding: "7px 11px", borderRadius: 10, cursor: "pointer",
+                    border: appointDays === d ? "2px solid #64B5F6" : "1px solid rgba(255,255,255,0.08)",
+                    background: appointDays === d ? "rgba(100,181,246,0.15)" : "rgba(255,255,255,0.02)",
+                    color: appointDays === d ? "#FFF" : "#5A7A9A",
+                    fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 600,
+                    lineHeight: 1.3,
+                  }}>
+                    {d} <span style={{ fontSize: 10 }}>วัน</span>
+                    {d >= 7 && <div style={{ fontSize: 9, color: "#4A5A6A" }}>({(d / 7).toFixed(d % 7 === 0 ? 0 : 1)} wk)</div>}
+                  </button>
+                ))}
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: 12, color: "#6A8AAB" }}>กำหนดเอง:</span>
+                <input type="number" min={1} max={365} value={appointDays}
+                  onChange={e => setAppointDays(Math.max(1, parseInt(e.target.value) || 1))}
+                  style={{
+                    width: 65, padding: "6px 8px", borderRadius: 8, textAlign: "center",
+                    background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
+                    color: "#FFF", fontFamily: "'JetBrains Mono', monospace", fontSize: 14,
+                  }}
+                />
+                <span style={{ fontSize: 12, color: "#6A8AAB" }}>วัน</span>
+              </div>
+            </Card>
+          </div>
 
           {/* Current plan mini */}
           <Card style={{ marginTop: 12 }}>
@@ -1089,54 +1098,56 @@ export default function WarfarinCalculator() {
             </div>
           </Card>
 
-          {/* Pill Count */}
-          <Card style={{
-            marginTop: 12,
-            background: "rgba(76,175,80,0.05)",
-            border: "1px solid rgba(76,175,80,0.2)",
-          }}>
-            <Label icon="🧮" text={`จำนวนเม็ดยาที่ต้องจ่าย (${appointDays} วัน)`} color="#81C784" />
-
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
-              {tablets.map(mg => {
-                const cnt = pillCounts[mg] || 0;
-                return (
-                  <div key={mg} style={{
-                    flex: 1, minWidth: 100, padding: "12px 8px", borderRadius: 14, textAlign: "center",
-                    background: `${TC[mg]}0D`, border: `2px solid ${TC[mg]}30`,
-                  }}>
-                    <PillDot mg={mg} on />
-                    <div style={{ fontSize: 11, color: "#6A8AAB", marginTop: 4 }}>
-                      {mg} mg <span style={{ color: PILL_COLORS[mg]?.stroke }}>({PILL_COLORS[mg]?.label})</span>
-                    </div>
-                    <div style={{
-                      fontSize: 34, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace",
-                      color: "#FFF", lineHeight: 1.1, marginTop: 2,
-                    }}>{cnt}</div>
-                    <div style={{ fontSize: 11, color: "#5A7A9A" }}>เม็ด</div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div style={{
-              padding: 14, borderRadius: 14, textAlign: "center",
-              background: "linear-gradient(135deg, rgba(76,175,80,0.1), rgba(56,142,60,0.06))",
-              border: "1px solid rgba(76,175,80,0.18)",
+          {/* Pill Count — ไม่แสดงในกระดาษพิมพ์ */}
+          <div className="no-print">
+            <Card style={{
+              marginTop: 12,
+              background: "rgba(76,175,80,0.05)",
+              border: "1px solid rgba(76,175,80,0.2)",
             }}>
-              <div style={{ fontSize: 10, color: "#81C784", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>
-                รวมเม็ดยาทั้งหมด
+              <Label icon="🧮" text={`จำนวนเม็ดยาที่ต้องจ่าย (${appointDays} วัน)`} color="#81C784" />
+            
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
+                {tablets.map(mg => {
+                  const cnt = pillCounts[mg] || 0;
+                  return (
+                    <div key={mg} style={{
+                      flex: 1, minWidth: 100, padding: "12px 8px", borderRadius: 14, textAlign: "center",
+                      background: `${TC[mg]}0D`, border: `2px solid ${TC[mg]}30`,
+                    }}>
+                      <PillDot mg={mg} on />
+                      <div style={{ fontSize: 11, color: "#6A8AAB", marginTop: 4 }}>
+                        {mg} mg <span style={{ color: PILL_COLORS[mg]?.stroke }}>({PILL_COLORS[mg]?.label})</span>
+                      </div>
+                      <div style={{
+                        fontSize: 34, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace",
+                        color: "#FFF", lineHeight: 1.1, marginTop: 2,
+                      }}>{cnt}</div>
+                      <div style={{ fontSize: 11, color: "#5A7A9A" }}>เม็ด</div>
+                    </div>
+                  );
+                })}
               </div>
+            
               <div style={{
-                fontSize: 44, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace",
-                background: "linear-gradient(90deg, #81C784, #64B5F6)",
-                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.2,
-              }}>{totalPills}</div>
-              <div style={{ fontSize: 12, color: "#6A8AAB" }}>
-                เม็ด สำหรับ {appointDays} วัน ({(appointDays / 7).toFixed(appointDays % 7 === 0 ? 0 : 1)} สัปดาห์)
+                padding: 14, borderRadius: 14, textAlign: "center",
+                background: "linear-gradient(135deg, rgba(76,175,80,0.1), rgba(56,142,60,0.06))",
+                border: "1px solid rgba(76,175,80,0.18)",
+              }}>
+                <div style={{ fontSize: 10, color: "#81C784", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>
+                  รวมเม็ดยาทั้งหมด
+                </div>
+                <div style={{
+                  fontSize: 44, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace",
+                  background: "linear-gradient(90deg, #81C784, #64B5F6)",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.2,
+                }}>{totalPills}</div>
+                <div style={{ fontSize: 12, color: "#6A8AAB" }}>
+                  เม็ด สำหรับ {appointDays} วัน ({(appointDays / 7).toFixed(appointDays % 7 === 0 ? 0 : 1)} สัปดาห์)
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
 
           {/* Day breakdown */}
           <Card style={{ marginTop: 12 }}>
@@ -1167,6 +1178,39 @@ export default function WarfarinCalculator() {
               );
             })}
           </Card>
+
+          {/* Print summary for patient — ปุ่มนี้ใช้เฉพาะบนหน้าจอ ไม่พิมพ์ออก */}
+          <div className="no-print">
+            <Card style={{ marginTop: 12 }}>
+              <Label icon="🖨️" text="พิมพ์สรุปแผนยาให้ผู้ป่วย" />
+              <button
+                onClick={handlePrintCountSummary}
+                style={{
+                  width: "100%",
+                  padding: "10px 12px",
+                  borderRadius: 10,
+                  border: "none",
+                  cursor: "pointer",
+                  background: "linear-gradient(135deg, #1E88E5, #42A5F5)",
+                  color: "#FFF",
+                  fontWeight: 700,
+                  fontSize: 14,
+                  fontFamily: "inherit",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                }}
+              >
+                🖨️ พิมพ์แผนยาพร้อมรูปเม็ดยา
+              </button>
+              <div style={{ marginTop: 6, fontSize: 11, color: "#5A7A9A", lineHeight: 1.6 }}>
+                เมื่อกดปุ่มนี้ เบราว์เซอร์จะเปิดหน้าต่างพิมพ์ โดยใช้ข้อมูลจากแท็บ
+                <b> นับเม็ด</b> และส่วน <b>วิธีจัดยาแต่ละวัน</b> ซึ่งมีรูปเม็ดยาสีต่างๆ
+                ให้ผู้ป่วยดูวิธีกินยาได้ชัดเจน
+              </div>
+            </Card>
+          </div>
         </>)}
 
         {/* ═══════════ INR TAB ═══════════ */}
@@ -2118,7 +2162,7 @@ export default function WarfarinCalculator() {
             </div>
           </Card>
         </>)}
-        <div style={{
+        <div className="no-print" style={{
           marginTop: 14, padding: 11, borderRadius: 12,
           background: "rgba(255,193,7,0.06)", border: "1px solid rgba(255,193,7,0.18)",
           fontSize: 10, color: "#FFD54F", lineHeight: 1.6,
