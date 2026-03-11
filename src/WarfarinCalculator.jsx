@@ -645,6 +645,7 @@ export default function WarfarinCalculator() {
         padding: "14px 12px 50px",
         transform: `scale(${fontScale})`,
         transformOrigin: "top center",
+        width: `${100 / fontScale}%`,
       }}>
 
         {/* Tablet Select — show only in วางแผน & นับเม็ด */}
