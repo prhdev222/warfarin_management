@@ -297,6 +297,9 @@ export default function WarfarinCalculator() {
   const [navOpen, setNavOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(false);
   const [fontMode, setFontMode] = useState("normal"); // "normal" | "large" | "xlarge"
+  const [scheduleOffset, setScheduleOffset] = useState(0); // เลื่อนวัน (0-6)
+  const [patternMode, setPatternMode] = useState("auto"); // "auto" | "manual"
+  const [manualHighDays, setManualHighDays] = useState([]); // index 0-6 (ตามลำดับวันที่ที่แสดง)
   const [drugSearch, setDrugSearch] = useState("");
   const [selectedDrugs, setSelectedDrugs] = useState([]);
   const [currentINR, setCurrentINR] = useState("");
@@ -309,6 +312,12 @@ export default function WarfarinCalculator() {
 
   const handlePrintCountSummary = () => {
     window.print();
+  };
+
+  const rotate7 = (arr, offset) => {
+    const o = ((offset % 7) + 7) % 7;
+    if (o === 0) return arr;
+    return arr.map((_, i) => arr[(i - o + 7) % 7]);
   };
 
   const filteredDrugs = useMemo(() => {
@@ -336,6 +345,8 @@ export default function WarfarinCalculator() {
       return [...p, mg].sort((a, b) => a - b);
     });
     setSelIdx(0);
+    setPatternMode("auto");
+    setManualHighDays([]);
   };
 
   const effWeekly = inputMode === "daily"
@@ -382,7 +393,23 @@ export default function WarfarinCalculator() {
     return sorted.slice(0, 12);
   }, [allOptions, sortPref]);
 
-  const schedule = options[selIdx]?.schedule || Array(7).fill(0);
+  const selectedOption = options[selIdx] || null;
+  const baseSchedule = selectedOption?.schedule || Array(7).fill(0);
+  const autoSchedule = useMemo(() => rotate7(baseSchedule, scheduleOffset), [baseSchedule, scheduleOffset]);
+  const dayShort = useMemo(() => rotate7(DAYS_SHORT, scheduleOffset), [scheduleOffset]);
+  const dayTh = useMemo(() => rotate7(DAYS_TH, scheduleOffset), [scheduleOffset]);
+
+  const canManualPattern = !!(selectedOption && selectedOption.numDistinctDoses === 2 && selectedOption.gap > 0);
+  const requiredHighDays = canManualPattern ? selectedOption.nHigh : 0;
+  const doseHigh = canManualPattern ? selectedOption.doseHigh : 0;
+  const doseLow = canManualPattern ? selectedOption.doseLow : 0;
+
+  const schedule = useMemo(() => {
+    if (canManualPattern && patternMode === "manual" && manualHighDays.length === requiredHighDays) {
+      return Array.from({ length: 7 }).map((_, i) => (manualHighDays.includes(i) ? doseHigh : doseLow));
+    }
+    return autoSchedule;
+  }, [canManualPattern, patternMode, manualHighDays, requiredHighDays, doseHigh, doseLow, autoSchedule]);
 
   const combos = useMemo(() => schedule.map(d => findTabletCombo(d, tablets)), [schedule, tablets]);
 
@@ -827,6 +854,8 @@ export default function WarfarinCalculator() {
                                 if (inputMode === "daily") setDailyInput(Math.round(x.target / 7 * 10) / 10);
                                 else setWeeklyTarget(x.target);
                                 setSelIdx(0);
+                                setPatternMode("auto");
+                                setManualHighDays([]);
                               }} style={{
                                 padding: "6px 6px", borderRadius: 8, minWidth: 52,
                                 border: "1px solid rgba(239,83,80,0.25)",
@@ -885,7 +914,7 @@ export default function WarfarinCalculator() {
                   { id: "single", icon: "🎯", label: "พกยาแบบเดียว", desc: "ใช้เม็ดยาน้อยชนิด" },
                   { id: "simple", icon: "🧠", label: "จำง่ายที่สุด", desc: "จำนวน dose น้อย ไม่ซับซ้อน" },
                 ].map(p => (
-                  <button key={p.id} onClick={() => { setSortPref(p.id); setSelIdx(0); }} style={{
+                    <button key={p.id} onClick={() => { setSortPref(p.id); setSelIdx(0); setPatternMode("auto"); setManualHighDays([]); }} style={{
                     flex: 1, minWidth: 70, padding: "8px 4px", borderRadius: 10, cursor: "pointer",
                     border: `2px solid ${sortPref === p.id ? "#64B5F6" : "rgba(255,255,255,0.06)"}`,
                     background: sortPref === p.id ? "rgba(100,181,246,0.12)" : "rgba(255,255,255,0.02)",
@@ -911,7 +940,7 @@ export default function WarfarinCalculator() {
                 {options.map((opt, i) => {
                   const isSel = selIdx === i;
                   return (
-                    <button key={`${opt.doseHigh}-${opt.doseLow}-${opt.nHigh}`} onClick={() => setSelIdx(i)} style={{
+                    <button key={`${opt.doseHigh}-${opt.doseLow}-${opt.nHigh}`} onClick={() => { setSelIdx(i); setPatternMode("auto"); setManualHighDays([]); }} style={{
                       width: "100%", textAlign: "left", padding: "10px 12px", borderRadius: 12,
                       border: `2px solid ${isSel ? "#64B5F6" : "rgba(255,255,255,0.06)"}`,
                       background: isSel
@@ -989,7 +1018,176 @@ export default function WarfarinCalculator() {
           {/* Full schedule detail */}
           <Card style={{ marginTop: 12 }}>
             <Label icon="📅" text="ตารางยารายวัน (แผนที่เลือก)" />
-            {DAYS_TH.map((day, idx) => {
+            <div className="no-print" style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
+              <div style={{ fontSize: 11, color: "#6A8AAB", fontWeight: 600 }}>เลื่อนวันให้คนไข้เลือก:</div>
+              <button onClick={() => setScheduleOffset(o => (o + 6) % 7)} style={{
+                padding: "6px 10px", borderRadius: 10, border: "none", cursor: "pointer",
+                background: "rgba(255,255,255,0.06)", color: "#E3F2FD", fontWeight: 700,
+                fontFamily: "inherit", fontSize: 12,
+              }}>◀</button>
+              <div style={{
+                padding: "6px 10px", borderRadius: 10,
+                background: "rgba(100,181,246,0.10)", border: "1px solid rgba(100,181,246,0.25)",
+                color: "#90CAF9", fontSize: 12, fontWeight: 700,
+              }}>
+                เริ่มที่ {dayShort[0]}
+              </div>
+              <button onClick={() => setScheduleOffset(o => (o + 1) % 7)} style={{
+                padding: "6px 10px", borderRadius: 10, border: "none", cursor: "pointer",
+                background: "rgba(255,255,255,0.06)", color: "#E3F2FD", fontWeight: 700,
+                fontFamily: "inherit", fontSize: 12,
+              }}>▶</button>
+              <button onClick={() => setScheduleOffset(0)} style={{
+                padding: "6px 10px", borderRadius: 10, border: "none", cursor: "pointer",
+                background: "rgba(239,83,80,0.10)", color: "#EF9A9A", fontWeight: 700,
+                fontFamily: "inherit", fontSize: 12,
+              }}>รีเซ็ต</button>
+            </div>
+
+            {canManualPattern && (
+              <div className="no-print" style={{
+                marginBottom: 10,
+                padding: "10px 10px",
+                borderRadius: 12,
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.08)",
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#E3F2FD" }}>
+                    เลือกวัน “โดสสูง” ให้จำง่าย
+                    <span style={{ marginLeft: 6, fontSize: 11, color: "#90A4AE", fontWeight: 600 }}>
+                      (ต้องเลือก {requiredHighDays} วัน)
+                    </span>
+                  </div>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    <button onClick={() => { setPatternMode("auto"); setManualHighDays([]); }} style={{
+                      padding: "6px 10px", borderRadius: 10, border: "none", cursor: "pointer",
+                      background: patternMode === "auto" ? "rgba(100,181,246,0.20)" : "rgba(255,255,255,0.05)",
+                      color: patternMode === "auto" ? "#90CAF9" : "#AAB8C5",
+                      fontWeight: 700, fontSize: 12, fontFamily: "inherit",
+                    }}>อัตโนมัติ</button>
+                    <button onClick={() => setPatternMode("manual")} style={{
+                      padding: "6px 10px", borderRadius: 10, border: "none", cursor: "pointer",
+                      background: patternMode === "manual" ? "rgba(102,187,106,0.18)" : "rgba(255,255,255,0.05)",
+                      color: patternMode === "manual" ? "#A5D6A7" : "#AAB8C5",
+                      fontWeight: 700, fontSize: 12, fontFamily: "inherit",
+                    }}>เลือกเอง</button>
+                  </div>
+                </div>
+
+                {patternMode === "manual" && (
+                  <>
+                    <div style={{ marginTop: 10, display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      {dayShort.map((d, i) => {
+                        const on = manualHighDays.includes(i);
+                        const disabled = !on && manualHighDays.length >= requiredHighDays;
+                        return (
+                          <button
+                            key={d}
+                            onClick={() => {
+                              setManualHighDays(prev => {
+                                const has = prev.includes(i);
+                                if (has) return prev.filter(x => x !== i);
+                                if (prev.length >= requiredHighDays) return prev;
+                                return [...prev, i].sort((a, b) => a - b);
+                              });
+                            }}
+                            disabled={disabled}
+                            style={{
+                              padding: "7px 10px",
+                              borderRadius: 12,
+                              border: `2px solid ${on ? "#66BB6A" : "rgba(255,255,255,0.10)"}`,
+                              background: on ? "rgba(102,187,106,0.12)" : "rgba(255,255,255,0.03)",
+                              color: on ? "#E8F5E9" : "#AAB8C5",
+                              cursor: disabled ? "not-allowed" : "pointer",
+                              opacity: disabled ? 0.5 : 1,
+                              fontFamily: "inherit",
+                              fontSize: 12,
+                              fontWeight: 800,
+                            }}
+                          >
+                            {d}
+                          </button>
+                        );
+                      })}
+                      <button onClick={() => setManualHighDays([])} style={{
+                        padding: "7px 10px",
+                        borderRadius: 12,
+                        border: "none",
+                        background: "rgba(239,83,80,0.10)",
+                        color: "#EF9A9A",
+                        cursor: "pointer",
+                        fontFamily: "inherit",
+                        fontSize: 12,
+                        fontWeight: 800,
+                      }}>ล้าง</button>
+                    </div>
+
+                    {(() => {
+                      const presets = {
+                        3: [
+                          { k: "mwf", label: "จ-พ-ศ", idx: [0, 2, 4] },
+                          { k: "tthsa", label: "อ-พฤ-ส", idx: [1, 3, 5] },
+                          { k: "wfsu", label: "พ-ศ-อา", idx: [2, 4, 6] },
+                        ],
+                        2: [
+                          { k: "monthu", label: "จ-พฤ", idx: [0, 3] },
+                          { k: "tuefri", label: "อ-ศ", idx: [1, 4] },
+                          { k: "satsun", label: "ส-อา", idx: [5, 6] },
+                        ],
+                        1: [
+                          { k: "sun", label: "อา", idx: [6] },
+                          { k: "sat", label: "ส", idx: [5] },
+                          { k: "mon", label: "จ", idx: [0] },
+                        ],
+                        4: [
+                          { k: "monwedfriSun", label: "จ-พ-ศ-อา", idx: [0, 2, 4, 6] },
+                          { k: "tueThuSatSun", label: "อ-พฤ-ส-อา", idx: [1, 3, 5, 6] },
+                        ],
+                        5: [
+                          { k: "weekday", label: "จ-ศ", idx: [0, 1, 2, 3, 4] },
+                          { k: "tuesat", label: "อ-ส", idx: [1, 2, 3, 4, 5] },
+                        ],
+                        6: [
+                          { k: "allButSun", label: "ทุกวันยกเว้นอา", idx: [0, 1, 2, 3, 4, 5] },
+                          { k: "allButMon", label: "ทุกวันยกเว้นจ", idx: [1, 2, 3, 4, 5, 6] },
+                        ],
+                      };
+                      const list = presets[requiredHighDays] || [];
+                      if (list.length === 0) return null;
+                      return (
+                        <div style={{ marginTop: 10, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+                          <div style={{ fontSize: 11, color: "#6A8AAB", fontWeight: 700 }}>ตัวอย่างจำง่าย:</div>
+                          {list.map(p => (
+                            <button key={p.k} onClick={() => setManualHighDays(p.idx)} style={{
+                              padding: "6px 10px", borderRadius: 999,
+                              border: "1px solid rgba(255,255,255,0.14)",
+                              background: "rgba(255,255,255,0.04)",
+                              color: "#E3F2FD",
+                              cursor: "pointer",
+                              fontFamily: "inherit",
+                              fontSize: 12,
+                              fontWeight: 800,
+                              whiteSpace: "nowrap",
+                            }}>{p.label}</button>
+                          ))}
+                          <div style={{ marginLeft: "auto", fontSize: 11, color: "#90A4AE" }}>
+                            โดสสูง = {doseHigh} mg • โดสต่ำ = {doseLow} mg
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {manualHighDays.length !== requiredHighDays && (
+                      <div style={{ marginTop: 8, fontSize: 11, color: "#FFD54F" }}>
+                        ⚠️ ต้องเลือกให้ครบ {requiredHighDays} วัน ก่อนระบบจะใช้รูปแบบ “เลือกเอง”
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+            {dayTh.map((day, idx) => {
               const dose = schedule[idx];
               const combo = combos[idx];
               return (
@@ -998,7 +1196,7 @@ export default function WarfarinCalculator() {
                   background: idx % 2 === 0 ? "rgba(255,255,255,0.025)" : "transparent",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                    <span style={{ minWidth: 48, fontWeight: 700, fontSize: 13, color: "#90CAF9" }}>{DAYS_SHORT[idx]}</span>
+                    <span style={{ minWidth: 48, fontWeight: 700, fontSize: 13, color: "#90CAF9" }}>{dayShort[idx]}</span>
                     <span style={{
                       minWidth: 55, textAlign: "center",
                       fontFamily: "'JetBrains Mono', monospace", fontSize: 15, fontWeight: 800,
@@ -1080,7 +1278,7 @@ export default function WarfarinCalculator() {
           <Card style={{ marginTop: 12 }}>
             <Label icon="💊" text="แผนยาปัจจุบัน" />
             <div style={{ display: "flex", gap: 3, marginBottom: 6 }}>
-              {DAYS_SHORT.map((d, i) => (
+              {dayShort.map((d, i) => (
                 <div key={i} style={{
                   flex: 1, textAlign: "center", padding: "4px 0", borderRadius: 6,
                   background: schedule[i] === 0 ? "rgba(239,83,80,0.1)" : "rgba(100,181,246,0.08)",
@@ -1152,7 +1350,7 @@ export default function WarfarinCalculator() {
           {/* Day breakdown */}
           <Card style={{ marginTop: 12 }}>
             <Label icon="📋" text="วิธีจัดยาแต่ละวัน" />
-            {DAYS_TH.map((day, idx) => {
+            {dayTh.map((day, idx) => {
               const dose = schedule[idx];
               const combo = combos[idx];
               return (
@@ -1161,7 +1359,7 @@ export default function WarfarinCalculator() {
                   background: idx % 2 === 0 ? "rgba(255,255,255,0.025)" : "transparent",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 3 }}>
-                    <span style={{ minWidth: 44, fontWeight: 700, fontSize: 12, color: "#90CAF9" }}>{DAYS_SHORT[idx]}</span>
+                    <span style={{ minWidth: 44, fontWeight: 700, fontSize: 12, color: "#90CAF9" }}>{dayShort[idx]}</span>
                     <span style={{
                       minWidth: 48, textAlign: "center",
                       fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700,
