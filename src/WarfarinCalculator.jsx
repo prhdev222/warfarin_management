@@ -2370,6 +2370,22 @@ export default function WarfarinCalculator() {
           การจัดการ warfarin ก่อนผ่าตัด (Pre-op) ขึ้นกับ<b>ดุลยพินิจของแพทย์ผู้ผ่าตัด วิสัญญีแพทย์ และปัจจัยเฉพาะของผู้ป่วยแต่ละราย</b> ควรปรึกษาทีมผ่าตัดร่วมกันก่อนตัดสินใจเสมอ
         </div>
       </div>
+
+      <div className="no-print" style={{
+        textAlign: "center",
+        fontSize: 11,
+        color: "rgba(224,232,240,0.55)",
+        padding: "10px 0 18px",
+        letterSpacing: 0.4,
+      }}>
+        © 2026 directed by{" "}
+        <a
+          href="mailto:uradev222@gmail.com"
+          style={{ color: "rgba(144,202,249,0.95)", textDecoration: "none", fontWeight: 700 }}
+        >
+          Uradev
+        </a>
+      </div>
     </div>
   );
 }
