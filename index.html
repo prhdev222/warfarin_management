@@ -48,6 +48,19 @@
         }
       }
     </style>
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem("warfarin-theme");
+          var light = t === "light";
+          document.documentElement.setAttribute("data-theme", light ? "light" : "dark");
+          if (light) {
+            document.documentElement.style.background = "#eef2f8";
+            document.documentElement.style.color = "#1a2332";
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

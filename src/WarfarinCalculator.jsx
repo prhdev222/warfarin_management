@@ -1,4 +1,88 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, createContext, useContext, useEffect } from "react";
+
+const ThemeContext = createContext(null);
+
+/** Dark / Light palettes for shell + Card/Label */
+const THEME_PALETTES = {
+  dark: {
+    appBg: "linear-gradient(170deg, #0D1B2A 0%, #1B2D44 50%, #162235 100%)",
+    appColor: "#E0E8F0",
+    headerBg: "linear-gradient(135deg, #1A365D 0%, #2B5EA7 60%, #1A365D 100%)",
+    headerBorder: "2px solid rgba(100,181,246,0.35)",
+    homeOverlay: "radial-gradient(circle at top, rgba(144,202,249,0.22), transparent 55%) , rgba(3,13,25,0.96)",
+    homeTileInactive: "rgba(255,255,255,0.04)",
+    homeTileText: "#E0E8F0",
+    homeDesc: "#90A4AE",
+    titleGradient: "linear-gradient(90deg, #FFF, #90CAF9)",
+    subtitle: "#7EB3DB",
+    fontBarBg: "rgba(3,13,25,0.6)",
+    fontBtnActive: "rgba(144,202,249,0.9)",
+    fontBtnActiveText: "#0D1B2A",
+    fontBtnIdle: "#E3F2FD",
+    hamburgerBorder: "1px solid rgba(255,255,255,0.3)",
+    hamburgerBg: "rgba(13,45,80,0.7)",
+    hamburgerBgOpen: "rgba(15,76,129,0.9)",
+    hamburgerIcon: "#E3F2FD",
+    navMenuBg: "rgba(5,25,45,0.96)",
+    navMenuBorder: "1px solid rgba(144,202,249,0.6)",
+    navBtnIdle: "#AFC7E4",
+    navBtnInactiveBg: "rgba(255,255,255,0.04)",
+    navBtnActiveText: "#FFF",
+    navShadow: "0 10px 28px rgba(0,0,0,0.5)",
+    homeTileActive: "linear-gradient(145deg, #1E4D8C, #2B6FBF)",
+    homeTileShadowActive: "0 8px 22px rgba(4,12,24,0.9)",
+    homeTileShadowInactive: "0 4px 14px rgba(0,0,0,0.55)",
+    homeCloseBtnBg: "rgba(255,255,255,0.06)",
+    homeCloseBtnColor: "#CFD8DC",
+    homeHeading: "#E3F2FD",
+    themeToggleBg: "rgba(255,255,255,0.08)",
+    themeToggleIcon: "#FFE082",
+    cardBg: "rgba(255,255,255,0.035)",
+    cardBorder: "1px solid rgba(255,255,255,0.07)",
+    labelDefault: "#7EB3DB",
+    footerMuted: "rgba(224,232,240,0.55)",
+    footerLink: "rgba(144,202,249,0.95)",
+  },
+  light: {
+    appBg: "linear-gradient(170deg, #eef2f8 0%, #e4ecf4 50%, #dae6f0 100%)",
+    appColor: "#1a2332",
+    headerBg: "linear-gradient(135deg, #e8f2fc 0%, #cfe0f5 55%, #e3eef9 100%)",
+    headerBorder: "2px solid rgba(30,77,140,0.22)",
+    homeOverlay: "radial-gradient(circle at top, rgba(80,130,200,0.12), transparent 55%) , rgba(252,253,255,0.98)",
+    homeTileInactive: "rgba(255,255,255,0.92)",
+    homeTileText: "#1a2332",
+    homeDesc: "#546e7a",
+    titleGradient: "linear-gradient(90deg, #0d47a1, #1976d2)",
+    subtitle: "#37474f",
+    fontBarBg: "rgba(255,255,255,0.85)",
+    fontBtnActive: "rgba(25,118,210,0.95)",
+    fontBtnActiveText: "#fff",
+    fontBtnIdle: "#1565c0",
+    hamburgerBorder: "1px solid rgba(21,101,192,0.35)",
+    hamburgerBg: "rgba(255,255,255,0.75)",
+    hamburgerBgOpen: "rgba(227,242,253,0.95)",
+    hamburgerIcon: "#1565c0",
+    navMenuBg: "rgba(255,255,255,0.98)",
+    navMenuBorder: "1px solid rgba(25,118,210,0.28)",
+    navBtnIdle: "#455a64",
+    navBtnInactiveBg: "rgba(25,118,210,0.08)",
+    navBtnActiveText: "#fff",
+    navShadow: "0 10px 28px rgba(0,0,0,0.12)",
+    homeTileActive: "linear-gradient(145deg, #1565c0, #42a5f5)",
+    homeTileShadowActive: "0 8px 22px rgba(21,101,192,0.35)",
+    homeTileShadowInactive: "0 4px 14px rgba(0,0,0,0.12)",
+    homeCloseBtnBg: "rgba(25,118,210,0.12)",
+    homeCloseBtnColor: "#1565c0",
+    homeHeading: "#0d47a1",
+    themeToggleBg: "rgba(255,255,255,0.75)",
+    themeToggleIcon: "#5c6bc0",
+    cardBg: "#ffffff",
+    cardBorder: "1px solid rgba(0,0,0,0.1)",
+    labelDefault: "#1565c0",
+    footerMuted: "rgba(26,35,50,0.55)",
+    footerLink: "#0d47a1",
+  },
+};
 
 const DAYS_TH = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์", "เสาร์", "อาทิตย์"];
 const DAYS_SHORT = ["จ.", "อ.", "พ.", "พฤ.", "ศ.", "ส.", "อา."];
@@ -297,6 +381,13 @@ export default function WarfarinCalculator() {
   const [navOpen, setNavOpen] = useState(false);
   const [homeOpen, setHomeOpen] = useState(false);
   const [fontMode, setFontMode] = useState("normal"); // "normal" | "large" | "xlarge"
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem("warfarin-theme") === "light" ? "light" : "dark";
+    } catch {
+      return "dark";
+    }
+  });
   const [scheduleOffset, setScheduleOffset] = useState(0); // เลื่อนวัน (0-6)
   const [patternMode, setPatternMode] = useState("auto"); // "auto" | "manual"
   const [manualHighDays, setManualHighDays] = useState([]); // index 0-6 (ตามลำดับวันที่ที่แสดง)
@@ -309,6 +400,15 @@ export default function WarfarinCalculator() {
   const [bleedRisk, setBleedRisk] = useState("low_mod");
 
   const fontScale = fontMode === "normal" ? 1 : fontMode === "large" ? 1.18 : 1.3;
+
+  const palette = THEME_PALETTES[theme];
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("warfarin-theme", theme);
+    } catch { /* ignore */ }
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   const handlePrintCountSummary = () => {
     window.print();
@@ -445,11 +545,12 @@ export default function WarfarinCalculator() {
   const TC = { 1: "#BDBDBD", 2: "#FF8C00", 3: "#4285F4", 4: "#FFD600", 5: "#EC407A" };
 
   return (
+    <ThemeContext.Provider value={palette}>
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(170deg, #0D1B2A 0%, #1B2D44 50%, #162235 100%)",
+      background: palette.appBg,
       fontFamily: "'Sarabun', 'Noto Sans Thai', sans-serif",
-      color: "#E0E8F0",
+      color: palette.appColor,
       fontSize: 18,
       lineHeight: 1.7,
     }}>
@@ -461,7 +562,7 @@ export default function WarfarinCalculator() {
           position: "fixed",
           inset: 0,
           zIndex: 40,
-          background: "radial-gradient(circle at top, rgba(144,202,249,0.22), transparent 55%) , rgba(3,13,25,0.96)",
+          background: palette.homeOverlay,
           display: "flex",
           alignItems: "stretch",
           justifyContent: "flex-start",
@@ -470,13 +571,13 @@ export default function WarfarinCalculator() {
         }}>
           <div style={{ width: "100%", maxWidth: 440, margin: "0 auto" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "#E3F2FD" }}>เลือกโหมดการใช้งาน</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: palette.homeHeading }}>เลือกโหมดการใช้งาน</div>
               <button
                 onClick={() => setHomeOpen(false)}
                 style={{
                   border: "none",
-                  background: "rgba(255,255,255,0.06)",
-                  color: "#CFD8DC",
+                  background: palette.homeCloseBtnBg,
+                  color: palette.homeCloseBtnColor,
                   borderRadius: 999,
                   padding: "4px 12px",
                   fontSize: 14,
@@ -505,9 +606,9 @@ export default function WarfarinCalculator() {
                     border: "none",
                     borderRadius: 18,
                     padding: "16px 14px",
-                    background: tab === t.id ? "linear-gradient(145deg, #1E4D8C, #2B6FBF)" : "rgba(255,255,255,0.04)",
-                    boxShadow: tab === t.id ? "0 8px 22px rgba(4,12,24,0.9)" : "0 4px 14px rgba(0,0,0,0.55)",
-                    color: "#E0E8F0",
+                    background: tab === t.id ? palette.homeTileActive : palette.homeTileInactive,
+                    boxShadow: tab === t.id ? palette.homeTileShadowActive : palette.homeTileShadowInactive,
+                    color: palette.homeTileText,
                     textAlign: "left",
                     cursor: "pointer",
                     display: "flex",
@@ -520,7 +621,7 @@ export default function WarfarinCalculator() {
                     <span style={{ fontSize: 26 }}>{t.ic}</span>
                     <span style={{ fontSize: 16, fontWeight: 700 }}>{t.title}</span>
                   </div>
-                  <div style={{ fontSize: 12, color: "#90A4AE" }}>{t.desc}</div>
+                  <div style={{ fontSize: 12, color: palette.homeDesc }}>{t.desc}</div>
                 </button>
               ))}
             </div>
@@ -531,8 +632,8 @@ export default function WarfarinCalculator() {
       {/* Header + Nav */}
       <div className="no-print">
         <div style={{
-          background: "linear-gradient(135deg, #1A365D 0%, #2B5EA7 60%, #1A365D 100%)",
-          padding: "18px 16px 12px", borderBottom: "2px solid rgba(100,181,246,0.35)",
+          background: palette.headerBg,
+          padding: "18px 16px 12px", borderBottom: palette.headerBorder,
           position: "sticky", top: 0, zIndex: 20,
         }}>
           <div style={{ maxWidth: 560, margin: "0 auto", display: "flex", alignItems: "center", gap: 12 }}>
@@ -557,16 +658,37 @@ export default function WarfarinCalculator() {
             >
               <h1 style={{
                 margin: 0, fontSize: 19, fontWeight: 800,
-                background: "linear-gradient(90deg, #FFF, #90CAF9)",
+                background: palette.titleGradient,
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
               }}>Warfarin Dose Planner</h1>
-              <p style={{ margin: 0, fontSize: 11, color: "#7EB3DB", fontWeight: 300 }}>
+              <p style={{ margin: 0, fontSize: 11, color: palette.subtitle, fontWeight: 300 }}>
                 คำนวณอัตโนมัติ • กระจาย dose ให้สม่ำเสมอ • นับเม็ดยา
               </p>
             </button>
           </div>
           {/* Right controls */}
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {/* Dark / Light */}
+            <button
+              type="button"
+              title={theme === "dark" ? "โหมดสว่าง" : "โหมดมืด"}
+              onClick={() => setTheme(th => (th === "dark" ? "light" : "dark"))}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 12,
+                border: palette.hamburgerBorder,
+                background: palette.themeToggleBg,
+                color: palette.themeToggleIcon,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                fontSize: 20,
+              }}
+            >
+              {theme === "dark" ? "☀️" : "🌙"}
+            </button>
             {/* Font size mode */}
             <div style={{
               display: "flex",
@@ -574,7 +696,7 @@ export default function WarfarinCalculator() {
               gap: 4,
               padding: "4px 6px",
               borderRadius: 999,
-              background: "rgba(3,13,25,0.6)",
+              background: palette.fontBarBg,
             }}>
               {[
                 { id: "normal", label: "A", fs: 13 },
@@ -588,8 +710,8 @@ export default function WarfarinCalculator() {
                     border: "none",
                     borderRadius: 999,
                     padding: "2px 6px",
-                    background: fontMode === f.id ? "rgba(144,202,249,0.9)" : "transparent",
-                    color: fontMode === f.id ? "#0D1B2A" : "#E3F2FD",
+                    background: fontMode === f.id ? palette.fontBtnActive : "transparent",
+                    color: fontMode === f.id ? palette.fontBtnActiveText : palette.fontBtnIdle,
                     cursor: "pointer",
                     fontSize: f.fs,
                     lineHeight: 1,
@@ -606,9 +728,9 @@ export default function WarfarinCalculator() {
                 width: 40,
                 height: 40,
                 borderRadius: 12,
-                border: "1px solid rgba(255,255,255,0.3)",
-                background: navOpen ? "rgba(15,76,129,0.9)" : "rgba(13,45,80,0.7)",
-                color: "#E3F2FD",
+                border: palette.hamburgerBorder,
+                background: navOpen ? palette.hamburgerBgOpen : palette.hamburgerBg,
+                color: palette.hamburgerIcon,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -628,10 +750,10 @@ export default function WarfarinCalculator() {
             marginLeft: "auto",
             marginRight: "auto",
             borderRadius: 14,
-            border: "1px solid rgba(144,202,249,0.6)",
-            background: "rgba(5,25,45,0.96)",
+            border: palette.navMenuBorder,
+            background: palette.navMenuBg,
             padding: 8,
-            boxShadow: "0 10px 28px rgba(0,0,0,0.5)",
+            boxShadow: palette.navShadow,
           }}>
             {[
               { id: "plan", ic: "🎯", l: "วางแผน" },
@@ -650,8 +772,8 @@ export default function WarfarinCalculator() {
                   borderRadius: 10,
                   border: "none",
                   marginBottom: 4,
-                  background: tab === t.id ? "linear-gradient(135deg, #1E4D8C, #2B6FBF)" : "rgba(255,255,255,0.04)",
-                  color: tab === t.id ? "#FFF" : "#AFC7E4",
+                  background: tab === t.id ? palette.homeTileActive : palette.navBtnInactiveBg,
+                  color: tab === t.id ? palette.navBtnActiveText : palette.navBtnIdle,
                   fontFamily: "inherit",
                   fontSize: 14,
                   fontWeight: 600,
@@ -2374,19 +2496,20 @@ export default function WarfarinCalculator() {
       <div className="no-print" style={{
         textAlign: "center",
         fontSize: 11,
-        color: "rgba(224,232,240,0.55)",
+        color: palette.footerMuted,
         padding: "10px 0 18px",
         letterSpacing: 0.4,
       }}>
         © 2026 directed by{" "}
         <a
           href="mailto:uradev222@gmail.com"
-          style={{ color: "rgba(144,202,249,0.95)", textDecoration: "none", fontWeight: 700 }}
+          style={{ color: palette.footerLink, textDecoration: "none", fontWeight: 700 }}
         >
           Uradev
         </a>
       </div>
     </div>
+    </ThemeContext.Provider>
   );
 }
 
@@ -2405,12 +2528,15 @@ function recBox(c) {
 }
 
 function Card({ children, style }) {
+  const t = useContext(ThemeContext);
+  const cardBg = t?.cardBg ?? "rgba(255,255,255,0.035)";
+  const cardBorder = t?.cardBorder ?? "1px solid rgba(255,255,255,0.07)";
   return (
     <div
       style={{
-        background: "rgba(255,255,255,0.035)",
+        background: cardBg,
         borderRadius: 16,
-        border: "1px solid rgba(255,255,255,0.07)",
+        border: cardBorder,
         padding: "12px 14px",
         ...style,
       }}
@@ -2421,9 +2547,11 @@ function Card({ children, style }) {
 }
 
 function Label({ icon, text, color }) {
+  const t = useContext(ThemeContext);
+  const defaultColor = color || t?.labelDefault || "#7EB3DB";
   return (
     <div style={{
-      fontSize: 11, fontWeight: 700, color: color || "#7EB3DB",
+      fontSize: 11, fontWeight: 700, color: defaultColor,
       marginBottom: 8, letterSpacing: .6, textTransform: "uppercase",
     }}>{icon} {text}</div>
   );
