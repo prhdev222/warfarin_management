@@ -42,6 +42,42 @@ const THEME_PALETTES = {
     labelDefault: "#7EB3DB",
     footerMuted: "rgba(224,232,240,0.55)",
     footerLink: "rgba(144,202,249,0.95)",
+    /* ข้อความในการ์ด — contrast ชัดเจน */
+    textOnCard: "#F2F6FA",
+    textEmphasis: "#FFFFFF",
+    textSecondary: "#C5D3E0",
+    textMuted: "#B0BEC8",
+    textTertiary: "#B8C5D4",
+    textOption: "#B8CEE8",
+    textHint: "#A8B0BC",
+    headingMuted: "#B0BEC5",
+    accent: "#90CAF9",
+    nestedPanelBg: "rgba(255,255,255,0.04)",
+    nestedPanelBorder: "1px solid rgba(255,255,255,0.1)",
+    segmentInactiveBg: "rgba(255,255,255,0.06)",
+    segmentActiveBg: "rgba(100,181,246,0.22)",
+    pillBorderOff: "rgba(255,255,255,0.22)",
+    pillBgOff: "rgba(255,255,255,0.06)",
+    inputBg: "rgba(255,255,255,0.08)",
+    inputBorder: "2px solid rgba(100,181,246,0.4)",
+    inputColor: "#F2F6FA",
+    stepBtnBg: "rgba(255,255,255,0.07)",
+    stepBtnBgSmall: "rgba(255,255,255,0.04)",
+    stepBtnColor: "#90CAF9",
+    rowStripeBg: "rgba(255,255,255,0.05)",
+    dividerSoft: "rgba(255,255,255,0.1)",
+    optionRowUnsel: "rgba(255,255,255,0.03)",
+    miniSchedCell: "rgba(255,255,255,0.06)",
+    optionCardSelBg: "linear-gradient(135deg, rgba(100,181,246,0.14), rgba(30,77,140,0.1))",
+    optionCardUnselBg: "rgba(255,255,255,0.03)",
+    optionCardBorderOff: "rgba(255,255,255,0.12)",
+    sortChipBorderOff: "rgba(255,255,255,0.1)",
+    summaryBarBorder: "1px solid rgba(100,181,246,0.2)",
+    summaryBarBg: "linear-gradient(135deg, rgba(30,77,140,0.15), rgba(100,181,246,0.06))",
+    formFieldBg: "rgba(255,255,255,0.06)",
+    formFieldBorder: "1px solid rgba(255,255,255,0.15)",
+    pillDotOffFill: "#2A3444",
+    pillDotOffStroke: "#5c6b7a",
   },
   light: {
     appBg: "linear-gradient(170deg, #eef2f8 0%, #e4ecf4 50%, #dae6f0 100%)",
@@ -81,6 +117,41 @@ const THEME_PALETTES = {
     labelDefault: "#1565c0",
     footerMuted: "rgba(26,35,50,0.55)",
     footerLink: "#0d47a1",
+    textOnCard: "#1a2332",
+    textEmphasis: "#0d47a1",
+    textSecondary: "#37474f",
+    textMuted: "#546e7a",
+    textTertiary: "#455a64",
+    textOption: "#1565c0",
+    textHint: "#607d8b",
+    headingMuted: "#607d8b",
+    accent: "#1565c0",
+    nestedPanelBg: "rgba(0,0,0,0.04)",
+    nestedPanelBorder: "1px solid rgba(0,0,0,0.1)",
+    segmentInactiveBg: "rgba(0,0,0,0.06)",
+    segmentActiveBg: "rgba(25,118,210,0.14)",
+    pillBorderOff: "rgba(0,0,0,0.2)",
+    pillBgOff: "rgba(0,0,0,0.04)",
+    inputBg: "#ffffff",
+    inputBorder: "2px solid rgba(25,118,210,0.35)",
+    inputColor: "#1a2332",
+    stepBtnBg: "rgba(0,0,0,0.06)",
+    stepBtnBgSmall: "rgba(0,0,0,0.04)",
+    stepBtnColor: "#1565c0",
+    rowStripeBg: "rgba(0,0,0,0.04)",
+    dividerSoft: "rgba(0,0,0,0.1)",
+    optionRowUnsel: "rgba(0,0,0,0.02)",
+    miniSchedCell: "rgba(0,0,0,0.05)",
+    optionCardSelBg: "linear-gradient(135deg, rgba(25,118,210,0.12), rgba(25,118,210,0.05))",
+    optionCardUnselBg: "rgba(0,0,0,0.02)",
+    optionCardBorderOff: "rgba(0,0,0,0.12)",
+    sortChipBorderOff: "rgba(0,0,0,0.12)",
+    summaryBarBorder: "1px solid rgba(25,118,210,0.2)",
+    summaryBarBg: "linear-gradient(135deg, rgba(25,118,210,0.08), rgba(25,118,210,0.03))",
+    formFieldBg: "#ffffff",
+    formFieldBorder: "1px solid rgba(0,0,0,0.12)",
+    pillDotOffFill: "#eceff1",
+    pillDotOffStroke: "#90a4ae",
   },
 };
 
@@ -813,15 +884,15 @@ export default function WarfarinCalculator() {
                   return (
                     <button key={mg} onClick={() => toggleTab(mg)} style={{
                       flex: 1, padding: "8px 2px", borderRadius: 12, cursor: "pointer",
-                      border: `2px solid ${on ? TC[mg] : "rgba(255,255,255,0.08)"}`,
-                      background: on ? `${TC[mg]}15` : "rgba(255,255,255,0.02)",
-                      color: on ? "#FFF" : "#4A5A6A", fontFamily: "inherit",
+                      border: `2px solid ${on ? TC[mg] : palette.pillBorderOff}`,
+                      background: on ? `${TC[mg]}15` : palette.pillBgOff,
+                      color: on ? "#FFF" : palette.textMuted, fontFamily: "inherit",
                       fontWeight: 700, fontSize: 13, transition: "all 0.2s",
                       display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
                     }}>
                       <PillDot mg={mg} on={on} />
                       <span>{mg} mg</span>
-                      <span style={{ fontSize: 9, fontWeight: 400, color: on ? pc.stroke : "#4A5A6A" }}>
+                      <span style={{ fontSize: 9, fontWeight: 400, color: on ? pc.stroke : palette.textMuted }}>
                         {pc.label}
                       </span>
                       <span style={{ fontSize: 9, fontWeight: 400, opacity: .7 }}>{on ? "✓ มี" : "ไม่มี"}</span>
@@ -848,8 +919,8 @@ export default function WarfarinCalculator() {
                   setSelIdx(0);
                 }} style={{
                   flex: 1, padding: "7px", borderRadius: 10, border: "none",
-                  background: inputMode === m ? "rgba(100,181,246,0.18)" : "rgba(255,255,255,0.03)",
-                  color: inputMode === m ? "#90CAF9" : "#4A5A6A",
+                  background: inputMode === m ? palette.segmentActiveBg : palette.segmentInactiveBg,
+                  color: inputMode === m ? palette.accent : palette.textMuted,
                   fontFamily: "inherit", fontSize: 12, fontWeight: 600, cursor: "pointer",
                 }}>
                   {m === "weekly" ? "mg/สัปดาห์" : "mg/วัน"}
@@ -871,12 +942,12 @@ export default function WarfarinCalculator() {
                   }}
                   style={{
                     width: 90, textAlign: "center", padding: "8px", borderRadius: 12,
-                    border: "2px solid rgba(100,181,246,0.35)",
-                    background: "rgba(255,255,255,0.05)", color: "#FFF",
+                    border: palette.inputBorder,
+                    background: palette.inputBg, color: palette.inputColor,
                     fontFamily: "'JetBrains Mono', monospace", fontSize: 22, fontWeight: 700,
                   }}
                 />
-                <div style={{ fontSize: 11, color: "#5A7A9A", marginTop: 3 }}>
+                <div style={{ fontSize: 11, color: palette.textSecondary, marginTop: 3 }}>
                   {inputMode === "daily" ? "mg/วัน" : "mg/สัปดาห์"}
                 </div>
               </div>
@@ -884,7 +955,7 @@ export default function WarfarinCalculator() {
               <StepBtn label="++" onClick={() => adjustVal(inputMode === "daily" ? 1 : 7)} />
             </div>
 
-            <div style={{ textAlign: "center", fontSize: 12, color: "#7EB3DB" }}>
+            <div style={{ textAlign: "center", fontSize: 12, color: palette.labelDefault }}>
               {inputMode === "daily"
                 ? <span>= <b>{effWeekly}</b> mg/สัปดาห์</span>
                 : <span>= เฉลี่ย <b>{(effWeekly / 7).toFixed(2)}</b> mg/วัน</span>
@@ -902,11 +973,11 @@ export default function WarfarinCalculator() {
               const steps = inputMode === "daily" ? dailySteps : weeklySteps;
 
               return (
-                <div style={{ marginTop: 12, padding: "10px 12px", borderRadius: 12, background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#5A7A9A", marginBottom: 6, textTransform: "uppercase", letterSpacing: .5 }}>
+                <div style={{ marginTop: 12, padding: "10px 12px", borderRadius: 12, background: palette.nestedPanelBg, border: palette.nestedPanelBorder }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: palette.textSecondary, marginBottom: 6, textTransform: "uppercase", letterSpacing: .5 }}>
                     ⚡ ปรับเร็ว — ตามเม็ดยาที่มี ({tablets.map(t => `${t}mg`).join(", ")})
                   </div>
-                  <div style={{ fontSize: 9, color: "#4A5A6A", marginBottom: 8 }}>
+                  <div style={{ fontSize: 9, color: palette.textMuted, marginBottom: 8 }}>
                     {inputMode === "daily" ? "mg/วัน" : "mg/สัปดาห์"} • ½เม็ด = {tablets.map(t => `${t/2}`).join(", ")} mg
                   </div>
 
@@ -962,10 +1033,10 @@ export default function WarfarinCalculator() {
 
                     return (
                       <>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: "#5A7A9A", marginTop: 10, marginBottom: 4, textTransform: "uppercase", letterSpacing: .5 }}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: palette.textSecondary, marginTop: 10, marginBottom: 4, textTransform: "uppercase", letterSpacing: .5 }}>
                           ⚡ ปรับเร็ว — % ที่จัดยาได้จริง
                         </div>
-                        <div style={{ fontSize: 9, color: "#4A5A6A", marginBottom: 6 }}>
+                        <div style={{ fontSize: 9, color: palette.textMuted, marginBottom: 6 }}>
                           แสดงเฉพาะ % ที่ลงตัวกับเม็ดยาที่มี
                         </div>
 
@@ -1028,7 +1099,7 @@ export default function WarfarinCalculator() {
 
             {/* Preference selector */}
             <div style={{ marginBottom: 10 }}>
-              <div style={{ fontSize: 10, color: "#5A7A9A", marginBottom: 6, fontWeight: 600 }}>เรียงแผนตาม:</div>
+              <div style={{ fontSize: 10, color: palette.textSecondary, marginBottom: 6, fontWeight: 600 }}>เรียงแผนตาม:</div>
               <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
                 {[
                   { id: "even", icon: "💉", label: "ระดับยาใกล้เคียง", desc: "dose แต่ละวันต่างกันน้อย" },
@@ -1038,16 +1109,16 @@ export default function WarfarinCalculator() {
                 ].map(p => (
                     <button key={p.id} onClick={() => { setSortPref(p.id); setSelIdx(0); setPatternMode("auto"); setManualHighDays([]); }} style={{
                     flex: 1, minWidth: 70, padding: "8px 4px", borderRadius: 10, cursor: "pointer",
-                    border: `2px solid ${sortPref === p.id ? "#64B5F6" : "rgba(255,255,255,0.06)"}`,
-                    background: sortPref === p.id ? "rgba(100,181,246,0.12)" : "rgba(255,255,255,0.02)",
+                    border: `2px solid ${sortPref === p.id ? "#64B5F6" : palette.sortChipBorderOff}`,
+                    background: sortPref === p.id ? "rgba(100,181,246,0.12)" : palette.optionCardUnselBg,
                     fontFamily: "inherit", textAlign: "center",
                     transition: "all 0.15s",
                   }}>
                     <div style={{ fontSize: 16 }}>{p.icon}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: sortPref === p.id ? "#FFF" : "#6A8AAB", marginTop: 2 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: sortPref === p.id ? palette.textEmphasis : palette.textTertiary, marginTop: 2 }}>
                       {p.label}
                     </div>
-                    <div style={{ fontSize: 8, color: "#4A5A6A", marginTop: 1 }}>{p.desc}</div>
+                    <div style={{ fontSize: 8, color: palette.textMuted, marginTop: 1 }}>{p.desc}</div>
                   </button>
                 ))}
               </div>
@@ -1064,10 +1135,10 @@ export default function WarfarinCalculator() {
                   return (
                     <button key={`${opt.doseHigh}-${opt.doseLow}-${opt.nHigh}`} onClick={() => { setSelIdx(i); setPatternMode("auto"); setManualHighDays([]); }} style={{
                       width: "100%", textAlign: "left", padding: "10px 12px", borderRadius: 12,
-                      border: `2px solid ${isSel ? "#64B5F6" : "rgba(255,255,255,0.06)"}`,
+                      border: `2px solid ${isSel ? "#64B5F6" : palette.optionCardBorderOff}`,
                       background: isSel
-                        ? "linear-gradient(135deg, rgba(100,181,246,0.12), rgba(30,77,140,0.08))"
-                        : "rgba(255,255,255,0.015)",
+                        ? palette.optionCardSelBg
+                        : palette.optionCardUnselBg,
                       cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
                       position: "relative",
                     }}>
@@ -1081,7 +1152,7 @@ export default function WarfarinCalculator() {
                       )}
 
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 5 }}>
-                        <span style={{ fontWeight: 700, fontSize: 12, color: isSel ? "#FFF" : "#8AACCA", flex: 1 }}>
+                        <span style={{ fontWeight: 700, fontSize: 12, color: isSel ? palette.textEmphasis : palette.textOption, flex: 1 }}>
                           {opt.label}
                         </span>
                       </div>
@@ -1112,20 +1183,20 @@ export default function WarfarinCalculator() {
                           <div key={di} style={{
                             flex: 1, textAlign: "center", padding: "3px 0", borderRadius: 5,
                             background: d === opt.doseHigh && opt.gap > 0
-                              ? "rgba(100,181,246,0.12)" : "rgba(255,255,255,0.04)",
+                              ? "rgba(100,181,246,0.12)" : palette.miniSchedCell,
                           }}>
-                            <div style={{ fontSize: 8, color: "#4A5A6A", fontWeight: 700 }}>{DAYS_SHORT[di]}</div>
+                            <div style={{ fontSize: 8, color: palette.textMuted, fontWeight: 700 }}>{DAYS_SHORT[di]}</div>
                             <div style={{
                               fontSize: 11, fontWeight: 700,
                               fontFamily: "'JetBrains Mono', monospace",
-                              color: d === 0 ? "#EF9A9A" : "#90CAF9",
+                              color: d === 0 ? "#EF9A9A" : palette.accent,
                             }}>{d}</div>
                           </div>
                         ))}
                       </div>
 
                       {/* Summary line */}
-                      <div style={{ marginTop: 4, fontSize: 9, color: "#4A5A6A", display: "flex", gap: 8 }}>
+                      <div style={{ marginTop: 4, fontSize: 9, color: palette.textMuted, display: "flex", gap: 8 }}>
                         {opt.gap > 0 && <span>ต่าง {opt.gap} mg</span>}
                         <span>ยา {opt.numTabletTypes} ชนิด</span>
                         <span>{opt.totalPillsPerWeek} เม็ด/wk</span>
@@ -1141,22 +1212,22 @@ export default function WarfarinCalculator() {
           <Card style={{ marginTop: 12 }}>
             <Label icon="📅" text="ตารางยารายวัน (แผนที่เลือก)" />
             <div className="no-print" style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
-              <div style={{ fontSize: 11, color: "#6A8AAB", fontWeight: 600 }}>เลื่อนวันให้คนไข้เลือก:</div>
+              <div style={{ fontSize: 11, color: palette.textTertiary, fontWeight: 600 }}>เลื่อนวันให้คนไข้เลือก:</div>
               <button onClick={() => setScheduleOffset(o => (o + 6) % 7)} style={{
                 padding: "6px 10px", borderRadius: 10, border: "none", cursor: "pointer",
-                background: "rgba(255,255,255,0.06)", color: "#E3F2FD", fontWeight: 700,
+                background: palette.stepBtnBg, color: palette.textOnCard, fontWeight: 700,
                 fontFamily: "inherit", fontSize: 12,
               }}>◀</button>
               <div style={{
                 padding: "6px 10px", borderRadius: 10,
                 background: "rgba(100,181,246,0.10)", border: "1px solid rgba(100,181,246,0.25)",
-                color: "#90CAF9", fontSize: 12, fontWeight: 700,
+                color: palette.accent, fontSize: 12, fontWeight: 700,
               }}>
                 เริ่มที่ {dayShort[0]}
               </div>
               <button onClick={() => setScheduleOffset(o => (o + 1) % 7)} style={{
                 padding: "6px 10px", borderRadius: 10, border: "none", cursor: "pointer",
-                background: "rgba(255,255,255,0.06)", color: "#E3F2FD", fontWeight: 700,
+                background: palette.stepBtnBg, color: palette.textOnCard, fontWeight: 700,
                 fontFamily: "inherit", fontSize: 12,
               }}>▶</button>
               <button onClick={() => setScheduleOffset(0)} style={{
@@ -1171,27 +1242,27 @@ export default function WarfarinCalculator() {
                 marginBottom: 10,
                 padding: "10px 10px",
                 borderRadius: 12,
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: palette.nestedPanelBg,
+                border: palette.nestedPanelBorder,
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#E3F2FD" }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: palette.textOnCard }}>
                     เลือกวัน “โดสสูง” ให้จำง่าย
-                    <span style={{ marginLeft: 6, fontSize: 11, color: "#90A4AE", fontWeight: 600 }}>
+                    <span style={{ marginLeft: 6, fontSize: 11, color: palette.headingMuted, fontWeight: 600 }}>
                       (ต้องเลือก {requiredHighDays} วัน)
                     </span>
                   </div>
                   <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                     <button onClick={() => { setPatternMode("auto"); setManualHighDays([]); }} style={{
                       padding: "6px 10px", borderRadius: 10, border: "none", cursor: "pointer",
-                      background: patternMode === "auto" ? "rgba(100,181,246,0.20)" : "rgba(255,255,255,0.05)",
-                      color: patternMode === "auto" ? "#90CAF9" : "#AAB8C5",
+                      background: patternMode === "auto" ? "rgba(100,181,246,0.20)" : palette.segmentInactiveBg,
+                      color: patternMode === "auto" ? palette.accent : palette.textHint,
                       fontWeight: 700, fontSize: 12, fontFamily: "inherit",
                     }}>อัตโนมัติ</button>
                     <button onClick={() => setPatternMode("manual")} style={{
                       padding: "6px 10px", borderRadius: 10, border: "none", cursor: "pointer",
-                      background: patternMode === "manual" ? "rgba(102,187,106,0.18)" : "rgba(255,255,255,0.05)",
-                      color: patternMode === "manual" ? "#A5D6A7" : "#AAB8C5",
+                      background: patternMode === "manual" ? "rgba(102,187,106,0.18)" : palette.segmentInactiveBg,
+                      color: patternMode === "manual" ? "#A5D6A7" : palette.textHint,
                       fontWeight: 700, fontSize: 12, fontFamily: "inherit",
                     }}>เลือกเอง</button>
                   </div>
@@ -1218,9 +1289,9 @@ export default function WarfarinCalculator() {
                             style={{
                               padding: "7px 10px",
                               borderRadius: 12,
-                              border: `2px solid ${on ? "#66BB6A" : "rgba(255,255,255,0.10)"}`,
-                              background: on ? "rgba(102,187,106,0.12)" : "rgba(255,255,255,0.03)",
-                              color: on ? "#E8F5E9" : "#AAB8C5",
+                              border: `2px solid ${on ? "#66BB6A" : palette.sortChipBorderOff}`,
+                              background: on ? "rgba(102,187,106,0.12)" : palette.optionCardUnselBg,
+                              color: on ? "#E8F5E9" : palette.textHint,
                               cursor: disabled ? "not-allowed" : "pointer",
                               opacity: disabled ? 0.5 : 1,
                               fontFamily: "inherit",
@@ -1279,13 +1350,13 @@ export default function WarfarinCalculator() {
                       if (list.length === 0) return null;
                       return (
                         <div style={{ marginTop: 10, display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
-                          <div style={{ fontSize: 11, color: "#6A8AAB", fontWeight: 700 }}>ตัวอย่างจำง่าย:</div>
+                          <div style={{ fontSize: 11, color: palette.textTertiary, fontWeight: 700 }}>ตัวอย่างจำง่าย:</div>
                           {list.map(p => (
                             <button key={p.k} onClick={() => setManualHighDays(p.idx)} style={{
                               padding: "6px 10px", borderRadius: 999,
                               border: "1px solid rgba(255,255,255,0.14)",
                               background: "rgba(255,255,255,0.04)",
-                              color: "#E3F2FD",
+                              color: palette.textOnCard,
                               cursor: "pointer",
                               fontFamily: "inherit",
                               fontSize: 12,
@@ -1293,7 +1364,7 @@ export default function WarfarinCalculator() {
                               whiteSpace: "nowrap",
                             }}>{p.label}</button>
                           ))}
-                          <div style={{ marginLeft: "auto", fontSize: 11, color: "#90A4AE" }}>
+                          <div style={{ marginLeft: "auto", fontSize: 11, color: palette.headingMuted }}>
                             โดสสูง = {doseHigh} mg • โดสต่ำ = {doseLow} mg
                           </div>
                         </div>
@@ -1315,16 +1386,16 @@ export default function WarfarinCalculator() {
               return (
                 <div key={idx} style={{
                   padding: "8px 10px", borderRadius: 10, marginBottom: 4,
-                  background: idx % 2 === 0 ? "rgba(255,255,255,0.025)" : "transparent",
+                  background: idx % 2 === 0 ? palette.rowStripeBg : "transparent",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                    <span style={{ minWidth: 48, fontWeight: 700, fontSize: 13, color: "#90CAF9" }}>{dayShort[idx]}</span>
+                    <span style={{ minWidth: 48, fontWeight: 700, fontSize: 13, color: palette.accent }}>{dayShort[idx]}</span>
                     <span style={{
                       minWidth: 55, textAlign: "center",
                       fontFamily: "'JetBrains Mono', monospace", fontSize: 15, fontWeight: 800,
-                      color: dose === 0 ? "#EF5350" : "#FFF",
+                      color: dose === 0 ? "#EF5350" : palette.textOnCard,
                     }}>{dose === 0 ? "หยุด" : `${dose} mg`}</span>
-                    <span style={{ flex: 1, fontSize: 10, color: "#5A7A9A", textAlign: "right" }}>
+                    <span style={{ flex: 1, fontSize: 10, color: palette.textSecondary, textAlign: "right" }}>
                       {PillComboText({ combo })}
                     </span>
                   </div>
@@ -1338,21 +1409,21 @@ export default function WarfarinCalculator() {
 
             <div style={{
               marginTop: 10, padding: 12, borderRadius: 12,
-              background: "linear-gradient(135deg, rgba(30,77,140,0.15), rgba(100,181,246,0.06))",
-              border: "1px solid rgba(100,181,246,0.15)",
+              background: palette.summaryBarBg,
+              border: palette.summaryBarBorder,
               display: "flex", justifyContent: "space-around", textAlign: "center",
             }}>
               <div>
-                <div style={{ fontSize: 9, color: "#5A7A9A", fontWeight: 700, textTransform: "uppercase" }}>รวม/สัปดาห์</div>
-                <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace" }}>
-                  {wkTotal} <span style={{ fontSize: 11, color: "#5A7A9A" }}>mg</span>
+                <div style={{ fontSize: 9, color: palette.textSecondary, fontWeight: 700, textTransform: "uppercase" }}>รวม/สัปดาห์</div>
+                <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", color: palette.textOnCard }}>
+                  {wkTotal} <span style={{ fontSize: 11, color: palette.textSecondary }}>mg</span>
                 </div>
               </div>
-              <div style={{ width: 1, background: "rgba(255,255,255,0.08)" }} />
+              <div style={{ width: 1, background: palette.dividerSoft }} />
               <div>
-                <div style={{ fontSize: 9, color: "#5A7A9A", fontWeight: 700, textTransform: "uppercase" }}>เฉลี่ย/วัน</div>
-                <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", color: "#90CAF9" }}>
-                  {dayAvg} <span style={{ fontSize: 11, color: "#5A7A9A" }}>mg</span>
+                <div style={{ fontSize: 9, color: palette.textSecondary, fontWeight: 700, textTransform: "uppercase" }}>เฉลี่ย/วัน</div>
+                <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace", color: palette.accent }}>
+                  {dayAvg} <span style={{ fontSize: 11, color: palette.textSecondary }}>mg</span>
                 </div>
               </div>
             </div>
@@ -1370,28 +1441,28 @@ export default function WarfarinCalculator() {
                 {[7, 14, 21, 28, 30, 42, 56, 60, 90].map(d => (
                   <button key={d} onClick={() => setAppointDays(d)} style={{
                     padding: "7px 11px", borderRadius: 10, cursor: "pointer",
-                    border: appointDays === d ? "2px solid #64B5F6" : "1px solid rgba(255,255,255,0.08)",
-                    background: appointDays === d ? "rgba(100,181,246,0.15)" : "rgba(255,255,255,0.02)",
-                    color: appointDays === d ? "#FFF" : "#5A7A9A",
+                    border: appointDays === d ? "2px solid #64B5F6" : `1px solid ${palette.pillBorderOff}`,
+                    background: appointDays === d ? "rgba(100,181,246,0.15)" : palette.pillBgOff,
+                    color: appointDays === d ? palette.textEmphasis : palette.textSecondary,
                     fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 600,
                     lineHeight: 1.3,
                   }}>
                     {d} <span style={{ fontSize: 10 }}>วัน</span>
-                    {d >= 7 && <div style={{ fontSize: 9, color: "#4A5A6A" }}>({(d / 7).toFixed(d % 7 === 0 ? 0 : 1)} wk)</div>}
+                    {d >= 7 && <div style={{ fontSize: 9, color: palette.textMuted }}>({(d / 7).toFixed(d % 7 === 0 ? 0 : 1)} wk)</div>}
                   </button>
                 ))}
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: 12, color: "#6A8AAB" }}>กำหนดเอง:</span>
+                <span style={{ fontSize: 12, color: palette.textTertiary }}>กำหนดเอง:</span>
                 <input type="number" min={1} max={365} value={appointDays}
                   onChange={e => setAppointDays(Math.max(1, parseInt(e.target.value) || 1))}
                   style={{
                     width: 65, padding: "6px 8px", borderRadius: 8, textAlign: "center",
-                    background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)",
-                    color: "#FFF", fontFamily: "'JetBrains Mono', monospace", fontSize: 14,
+                    background: palette.inputBg, border: palette.inputBorder,
+                    color: palette.inputColor, fontFamily: "'JetBrains Mono', monospace", fontSize: 14,
                   }}
                 />
-                <span style={{ fontSize: 12, color: "#6A8AAB" }}>วัน</span>
+                <span style={{ fontSize: 12, color: palette.textTertiary }}>วัน</span>
               </div>
             </Card>
           </div>
@@ -1405,15 +1476,15 @@ export default function WarfarinCalculator() {
                   flex: 1, textAlign: "center", padding: "4px 0", borderRadius: 6,
                   background: schedule[i] === 0 ? "rgba(239,83,80,0.1)" : "rgba(100,181,246,0.08)",
                 }}>
-                  <div style={{ fontSize: 9, color: "#4A5A6A", fontWeight: 700 }}>{d}</div>
+                  <div style={{ fontSize: 9, color: palette.textMuted, fontWeight: 700 }}>{d}</div>
                   <div style={{
                     fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace",
-                    color: schedule[i] === 0 ? "#EF9A9A" : "#FFF",
+                    color: schedule[i] === 0 ? "#EF9A9A" : palette.textOnCard,
                   }}>{schedule[i]}</div>
                 </div>
               ))}
             </div>
-            <div style={{ textAlign: "center", fontSize: 11, color: "#5A7A9A" }}>
+            <div style={{ textAlign: "center", fontSize: 11, color: palette.textSecondary }}>
               {wkTotal} mg/wk • เฉลี่ย {dayAvg} mg/d
             </div>
           </Card>
@@ -1436,14 +1507,14 @@ export default function WarfarinCalculator() {
                       background: `${TC[mg]}0D`, border: `2px solid ${TC[mg]}30`,
                     }}>
                       <PillDot mg={mg} on />
-                      <div style={{ fontSize: 11, color: "#6A8AAB", marginTop: 4 }}>
+                      <div style={{ fontSize: 11, color: palette.textTertiary, marginTop: 4 }}>
                         {mg} mg <span style={{ color: PILL_COLORS[mg]?.stroke }}>({PILL_COLORS[mg]?.label})</span>
                       </div>
                       <div style={{
                         fontSize: 34, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace",
-                        color: "#FFF", lineHeight: 1.1, marginTop: 2,
+                        color: palette.textOnCard, lineHeight: 1.1, marginTop: 2,
                       }}>{cnt}</div>
-                      <div style={{ fontSize: 11, color: "#5A7A9A" }}>เม็ด</div>
+                      <div style={{ fontSize: 11, color: palette.textSecondary }}>เม็ด</div>
                     </div>
                   );
                 })}
@@ -1462,7 +1533,7 @@ export default function WarfarinCalculator() {
                   background: "linear-gradient(90deg, #81C784, #64B5F6)",
                   WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", lineHeight: 1.2,
                 }}>{totalPills}</div>
-                <div style={{ fontSize: 12, color: "#6A8AAB" }}>
+                <div style={{ fontSize: 12, color: palette.textTertiary }}>
                   เม็ด สำหรับ {appointDays} วัน ({(appointDays / 7).toFixed(appointDays % 7 === 0 ? 0 : 1)} สัปดาห์)
                 </div>
               </div>
@@ -1478,16 +1549,16 @@ export default function WarfarinCalculator() {
               return (
                 <div key={idx} style={{
                   padding: "7px 8px", borderRadius: 8, marginBottom: 3,
-                  background: idx % 2 === 0 ? "rgba(255,255,255,0.025)" : "transparent",
+                  background: idx % 2 === 0 ? palette.rowStripeBg : "transparent",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 3 }}>
-                    <span style={{ minWidth: 44, fontWeight: 700, fontSize: 12, color: "#90CAF9" }}>{dayShort[idx]}</span>
+                    <span style={{ minWidth: 44, fontWeight: 700, fontSize: 12, color: palette.accent }}>{dayShort[idx]}</span>
                     <span style={{
                       minWidth: 48, textAlign: "center",
                       fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700,
-                      color: dose === 0 ? "#EF9A9A" : "#FFF",
+                      color: dose === 0 ? "#EF9A9A" : palette.textOnCard,
                     }}>{dose === 0 ? "หยุด" : `${dose} mg`}</span>
-                    <span style={{ fontSize: 10, color: "#4A5A6A", flex: 1, textAlign: "right" }}>
+                    <span style={{ fontSize: 10, color: palette.textMuted, flex: 1, textAlign: "right" }}>
                       {PillComboText({ combo })}
                     </span>
                   </div>
@@ -1524,7 +1595,7 @@ export default function WarfarinCalculator() {
               >
                 🖨️ พิมพ์แผนยาพร้อมรูปเม็ดยา
               </button>
-              <div style={{ marginTop: 6, fontSize: 11, color: "#5A7A9A", lineHeight: 1.6 }}>
+              <div style={{ marginTop: 6, fontSize: 11, color: palette.textSecondary, lineHeight: 1.6 }}>
                 เมื่อกดปุ่มนี้ เบราว์เซอร์จะเปิดหน้าต่างพิมพ์ โดยใช้ข้อมูลจากแท็บ
                 <b> นับเม็ด</b> และส่วน <b>วิธีจัดยาแต่ละวัน</b> ซึ่งมีรูปเม็ดยาสีต่างๆ
                 ให้ผู้ป่วยดูวิธีกินยาได้ชัดเจน
@@ -1553,8 +1624,8 @@ export default function WarfarinCalculator() {
                     background: sel ? "rgba(100,181,246,0.12)" : "rgba(255,255,255,0.02)",
                     cursor: "pointer", fontFamily: "inherit",
                   }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: sel ? "#FFF" : "#8AACCA" }}>{opt.label}</div>
-                    <div style={{ fontSize: 10, color: "#5A7A9A", marginTop: 2 }}>{opt.sub}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: sel ? palette.textEmphasis : palette.textOption }}>{opt.label}</div>
+                    <div style={{ fontSize: 10, color: palette.textSecondary, marginTop: 2 }}>{opt.sub}</div>
                   </button>
                 );
               })}
@@ -1572,8 +1643,8 @@ export default function WarfarinCalculator() {
                 placeholder="ใส่ค่า INR"
                 style={{
                   width: 120, textAlign: "center", padding: "12px", borderRadius: 14,
-                  border: "2px solid rgba(100,181,246,0.35)",
-                  background: "rgba(255,255,255,0.06)", color: "#FFF",
+                  border: palette.inputBorder,
+                  background: palette.inputBg, color: palette.inputColor,
                   fontFamily: "'JetBrains Mono', monospace", fontSize: 28, fontWeight: 700,
                 }}
               />
@@ -1584,9 +1655,9 @@ export default function WarfarinCalculator() {
               {[1.2, 1.5, 1.8, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10].map(v => (
                 <button key={v} onClick={() => setCurrentINR(String(v))} style={{
                   padding: "5px 8px", borderRadius: 6, minWidth: 36,
-                  border: `1px solid ${parseFloat(currentINR) === v ? "#64B5F6" : "rgba(255,255,255,0.08)"}`,
-                  background: parseFloat(currentINR) === v ? "rgba(100,181,246,0.15)" : "rgba(255,255,255,0.02)",
-                  color: parseFloat(currentINR) === v ? "#FFF" : "#5A7A9A",
+                  border: `1px solid ${parseFloat(currentINR) === v ? "#64B5F6" : palette.pillBorderOff}`,
+                  background: parseFloat(currentINR) === v ? "rgba(100,181,246,0.15)" : palette.pillBgOff,
+                  color: parseFloat(currentINR) === v ? palette.textEmphasis : palette.textSecondary,
                   fontFamily: "'JetBrains Mono', monospace", fontSize: 11, fontWeight: 600, cursor: "pointer",
                 }}>{v}</button>
               ))}
@@ -1594,7 +1665,7 @@ export default function WarfarinCalculator() {
 
             {/* Bleeding status */}
             <div style={{ marginTop: 12 }}>
-              <div style={{ fontSize: 11, color: "#7EB3DB", marginBottom: 6, fontWeight: 600, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+              <div style={{ fontSize: 11, color: palette.labelDefault, marginBottom: 6, fontWeight: 600, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
                 <span>สถานะเลือดออก</span>
                 <span style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
                   <a
@@ -1606,7 +1677,7 @@ export default function WarfarinCalculator() {
                       borderRadius: 999,
                       border: "1px solid rgba(255,255,255,0.35)",
                       background: "rgba(255,255,255,0.04)",
-                      color: "#E3F2FD",
+                      color: palette.textOnCard,
                       fontSize: 10,
                       fontWeight: 600,
                       textDecoration: "none",
@@ -1646,7 +1717,7 @@ export default function WarfarinCalculator() {
                     border: `2px solid ${hasBleeding === b.id ? b.color : "rgba(255,255,255,0.06)"}`,
                     background: hasBleeding === b.id ? `${b.color}18` : "rgba(255,255,255,0.02)",
                     fontFamily: "inherit", fontSize: 10, fontWeight: 600,
-                    color: hasBleeding === b.id ? "#FFF" : "#5A7A9A",
+                    color: hasBleeding === b.id ? palette.textEmphasis : palette.textSecondary,
                   }}>{b.label}</button>
                 ))}
               </div>
@@ -1690,7 +1761,7 @@ export default function WarfarinCalculator() {
                         color: statusColor,
                       }}>INR {inr.toFixed(1)}</div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: statusColor }}>{status}</div>
-                      <div style={{ fontSize: 11, color: "#6A8AAB" }}>เป้าหมาย: INR {t.label}</div>
+                      <div style={{ fontSize: 11, color: palette.textTertiary }}>เป้าหมาย: INR {t.label}</div>
                     </div>
                   </div>
 
@@ -1704,13 +1775,13 @@ export default function WarfarinCalculator() {
 
                   {/* ── Subtherapeutic (INR ต่ำกว่าเป้าหมาย) ── */}
                   {inr < t.lo && (
-                    <div style={{ fontSize: 12, color: "#E0E8F0", lineHeight: 2 }}>
+                    <div style={{ fontSize: 12, color: palette.textOnCard, lineHeight: 2 }}>
                       <div style={{ fontWeight: 800, color: "#FF9800", marginBottom: 6, fontSize: 14 }}>
                         📈 ต้องเพิ่ม Warfarin
                       </div>
 
                       {inr >= t.lo - 0.3 && (
-                        <div style={recBox("#FF9800")}>
+                        <div style={recBox("#FF9800", palette.textOnCard)}>
                           <b>INR ต่ำกว่าเป้าเล็กน้อย</b><br />
                           • เพิ่ม weekly dose <b>5-10%</b><br />
                           • ตรวจ INR ซ้ำใน 1-2 สัปดาห์
@@ -1718,7 +1789,7 @@ export default function WarfarinCalculator() {
                       )}
 
                       {inr < t.lo - 0.3 && inr >= t.lo - 0.7 && (
-                        <div style={recBox("#FF9800")}>
+                        <div style={recBox("#FF9800", palette.textOnCard)}>
                           <b>INR ต่ำกว่าเป้าปานกลาง</b><br />
                           • เพิ่ม weekly dose <b>10-20%</b><br />
                           • ตรวจ INR ซ้ำใน 1-2 สัปดาห์<br />
@@ -1727,7 +1798,7 @@ export default function WarfarinCalculator() {
                       )}
 
                       {inr < t.lo - 0.7 && (
-                        <div style={recBox("#EF5350")}>
+                        <div style={recBox("#EF5350", palette.textOnCard)}>
                           <b>INR ต่ำมาก — เสี่ยงลิ่มเลือด</b><br />
                           • เพิ่ม weekly dose <b>15-25%</b><br />
                           • พิจารณา bridge ด้วย <b>LMWH (Enoxaparin 1 mg/kg q12h)</b> ถ้า high-risk<br />
@@ -1742,9 +1813,9 @@ export default function WarfarinCalculator() {
                         background: "rgba(255,152,0,0.08)", border: "1px solid rgba(255,152,0,0.2)",
                       }}>
                         <div style={{ fontSize: 11, fontWeight: 700, color: "#FFB74D", marginBottom: 6 }}>🧮 ตัวช่วยคำนวณ dose adjustment</div>
-                        <div style={{ fontSize: 11, color: "#AAB8C5", lineHeight: 1.8 }}>
+                        <div style={{ fontSize: 11, color: palette.textHint, lineHeight: 1.8 }}>
                           {effWeekly > 0 && (<>
-                            Weekly dose ปัจจุบัน: <b style={{ color: "#FFF" }}>{effWeekly} mg/wk</b><br />
+                            Weekly dose ปัจจุบัน: <b style={{ color: palette.textOnCard }}>{effWeekly} mg/wk</b><br />
                             +5% = <b>{(effWeekly * 1.05).toFixed(1)}</b> mg/wk •
                             +10% = <b>{(effWeekly * 1.10).toFixed(1)}</b> mg/wk •
                             +15% = <b>{(effWeekly * 1.15).toFixed(1)}</b> mg/wk •
@@ -1758,14 +1829,14 @@ export default function WarfarinCalculator() {
 
                   {/* ── Supratherapeutic (INR สูงเกิน) ── */}
                   {inr > t.hi && (
-                    <div style={{ fontSize: 12, color: "#E0E8F0", lineHeight: 2 }}>
+                    <div style={{ fontSize: 12, color: palette.textOnCard, lineHeight: 2 }}>
                       <div style={{ fontWeight: 800, color: "#EF5350", marginBottom: 6, fontSize: 14 }}>
                         📉 INR สูงเกิน — ต้องปรับลด/แก้ไข
                       </div>
 
                       {/* INR slightly above target */}
                       {inr > t.hi && inr <= t.hi + 0.5 && hasBleeding === "none" && (
-                        <div style={recBox("#FFC107")}>
+                        <div style={recBox("#FFC107", palette.textOnCard)}>
                           <b>สูงกว่าเป้าเล็กน้อย (≤{(t.hi + 0.5).toFixed(1)})</b><br />
                           • ลด weekly dose <b>5-10%</b><br />
                           • ไม่จำเป็นต้องหยุดยา<br />
@@ -1775,7 +1846,7 @@ export default function WarfarinCalculator() {
 
                       {/* INR 4.5-6 no bleeding */}
                       {inr > Math.max(t.hi + 0.5, 4.5) && inr <= 6 && hasBleeding === "none" && (
-                        <div style={recBox("#FF9800")}>
+                        <div style={recBox("#FF9800", palette.textOnCard)}>
                           <b>INR 4.5-6.0 ไม่มีเลือดออก</b><br />
                           • <b>หยุด warfarin 1-2 dose</b><br />
                           • ลด weekly dose <b>10-20%</b> เมื่อกลับมาให้<br />
@@ -1786,7 +1857,7 @@ export default function WarfarinCalculator() {
 
                       {/* INR 6-9 no bleeding */}
                       {inr > 6 && inr <= 9 && hasBleeding !== "major" && (
-                        <div style={recBox("#EF5350")}>
+                        <div style={recBox("#EF5350", palette.textOnCard)}>
                           <b>INR 6.0-9.0</b><br />
                           • <b>หยุด warfarin</b><br />
                           • พิจารณา <b>Vitamin K₁ (Phytonadione) 1-2.5 mg PO</b><br />
@@ -1798,7 +1869,7 @@ export default function WarfarinCalculator() {
 
                       {/* INR >9 no significant bleeding */}
                       {inr > 9 && hasBleeding !== "major" && (
-                        <div style={recBox("#D32F2F")}>
+                        <div style={recBox("#D32F2F", palette.textOnCard)}>
                           <b>INR &gt;9.0 ไม่มี major bleeding</b><br />
                           • <b>หยุด warfarin ทันที</b><br />
                           • ให้ <b>Vitamin K₁ 2.5-5 mg PO</b><br />
@@ -1818,7 +1889,7 @@ export default function WarfarinCalculator() {
                           <div style={{ fontSize: 15, fontWeight: 800, color: "#EF5350", marginBottom: 8 }}>
                             🆘 MAJOR / LIFE-THREATENING BLEEDING
                           </div>
-                          <div style={{ fontSize: 12, lineHeight: 2.2, color: "#E0E8F0" }}>
+                          <div style={{ fontSize: 12, lineHeight: 2.2, color: palette.textOnCard }}>
                             <b>1. หยุด warfarin ทันที</b><br />
                             <b>2. Vitamin K₁ 10 mg IV slow push</b> (ฉีดช้า &gt;10 นาที ลดเสี่ยง anaphylaxis)<br />
                             <b>3. 4-Factor PCC (Prothrombin Complex Concentrate)</b><br />
@@ -1845,7 +1916,7 @@ export default function WarfarinCalculator() {
 
                       {/* Minor bleeding */}
                       {hasBleeding === "minor" && inr > t.hi && (
-                        <div style={recBox("#E040FB")}>
+                        <div style={recBox("#E040FB", palette.textOnCard)}>
                           <b>Minor bleeding + INR สูง</b><br />
                           • <b>หยุด warfarin</b><br />
                           • <b>Vitamin K₁ {inr > 6 ? "2.5-5" : "1-2.5"} mg PO</b><br />
@@ -1862,9 +1933,9 @@ export default function WarfarinCalculator() {
                           background: "rgba(239,83,80,0.06)", border: "1px solid rgba(239,83,80,0.15)",
                         }}>
                           <div style={{ fontSize: 11, fontWeight: 700, color: "#EF9A9A", marginBottom: 6 }}>🧮 ตัวช่วยคำนวณ dose adjustment</div>
-                          <div style={{ fontSize: 11, color: "#AAB8C5", lineHeight: 1.8 }}>
+                          <div style={{ fontSize: 11, color: palette.textHint, lineHeight: 1.8 }}>
                             {effWeekly > 0 && (<>
-                              Weekly dose ปัจจุบัน: <b style={{ color: "#FFF" }}>{effWeekly} mg/wk</b><br />
+                              Weekly dose ปัจจุบัน: <b style={{ color: palette.textOnCard }}>{effWeekly} mg/wk</b><br />
                               −5% = <b>{(effWeekly * 0.95).toFixed(1)}</b> mg/wk •
                               −10% = <b>{(effWeekly * 0.90).toFixed(1)}</b> mg/wk •
                               −15% = <b>{(effWeekly * 0.85).toFixed(1)}</b> mg/wk •
@@ -1901,10 +1972,10 @@ export default function WarfarinCalculator() {
                           fontFamily: "'JetBrains Mono', monospace",
                           color: row.color,
                         }}>{row.range}</span>
-                        <div style={{ flex: 1, fontSize: 10, color: "#AAB8C5", lineHeight: 1.6 }}>
-                          <div><b style={{ color: "#E0E8F0" }}>{row.action}</b></div>
+                        <div style={{ flex: 1, fontSize: 10, color: palette.textHint, lineHeight: 1.6 }}>
+                          <div><b style={{ color: palette.textOnCard }}>{row.action}</b></div>
                           {row.vitk !== "-" && <div>💉 {row.vitk}</div>}
-                          <div style={{ color: "#5A7A9A" }}>{row.extra}</div>
+                          <div style={{ color: palette.textSecondary }}>{row.extra}</div>
                         </div>
                       </div>
                     ))}
@@ -1963,7 +2034,7 @@ export default function WarfarinCalculator() {
                           {agent.icon} {agent.name}
                         </div>
                         {agent.details.map((d, i) => (
-                          <div key={i} style={{ fontSize: 11, color: "#AAB8C5", lineHeight: 1.7, paddingLeft: 8 }}>
+                          <div key={i} style={{ fontSize: 11, color: palette.textHint, lineHeight: 1.7, paddingLeft: 8 }}>
                             {d}
                           </div>
                         ))}
@@ -1978,7 +2049,7 @@ export default function WarfarinCalculator() {
           {!currentINR && (
             <Card style={{ marginTop: 12, textAlign: "center", padding: 20 }}>
               <span style={{ fontSize: 36 }}>🩸</span>
-              <div style={{ fontSize: 13, color: "#5A7A9A", marginTop: 8 }}>ใส่ค่า INR ด้านบนเพื่อดูคำแนะนำ</div>
+              <div style={{ fontSize: 13, color: palette.textSecondary, marginTop: 8 }}>ใส่ค่า INR ด้านบนเพื่อดูคำแนะนำ</div>
             </Card>
           )}
         </>)}
@@ -2019,8 +2090,8 @@ export default function WarfarinCalculator() {
                     background: sel ? `${r.color}15` : "rgba(255,255,255,0.02)",
                     cursor: "pointer", fontFamily: "inherit",
                   }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: sel ? "#FFF" : "#8AACCA" }}>{r.label}</div>
-                    <div style={{ fontSize: 10, color: "#5A7A9A", marginTop: 3, lineHeight: 1.6 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: sel ? palette.textEmphasis : palette.textOption }}>{r.label}</div>
+                    <div style={{ fontSize: 10, color: palette.textSecondary, marginTop: 3, lineHeight: 1.6 }}>
                       {r.items.map((item, i) => <span key={i}>• {item}<br /></span>)}
                     </div>
                   </button>
@@ -2065,8 +2136,8 @@ export default function WarfarinCalculator() {
                     background: sel ? `${r.color}15` : "rgba(255,255,255,0.02)",
                     cursor: "pointer", fontFamily: "inherit",
                   }}>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: sel ? "#FFF" : "#8AACCA" }}>{r.label}</div>
-                    <div style={{ fontSize: 10, color: "#5A7A9A", marginTop: 3, lineHeight: 1.6 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: sel ? palette.textEmphasis : palette.textOption }}>{r.label}</div>
+                    <div style={{ fontSize: 10, color: palette.textSecondary, marginTop: 3, lineHeight: 1.6 }}>
                       {r.items.map((item, i) => <span key={i}>• {item}<br /></span>)}
                     </div>
                   </button>
@@ -2081,7 +2152,7 @@ export default function WarfarinCalculator() {
 
             {/* Minimal bleed → continue warfarin */}
             {bleedRisk === "minimal" && (
-              <div style={recBox("#66BB6A")}>
+              <div style={recBox("#66BB6A", palette.textOnCard)}>
                 <div style={{ fontSize: 14, fontWeight: 800, color: "#66BB6A", marginBottom: 6 }}>
                   ✅ ให้ Warfarin ต่อได้ — ไม่ต้องหยุด
                 </div>
@@ -2098,7 +2169,7 @@ export default function WarfarinCalculator() {
             {bleedRisk !== "minimal" && (
               <>
                 {/* Timeline */}
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#90CAF9", marginBottom: 10 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: palette.accent, marginBottom: 10 }}>
                   ⏱️ Timeline ก่อน-หลังผ่าตัด
                 </div>
 
@@ -2125,8 +2196,8 @@ export default function WarfarinCalculator() {
                       }}>{step.day}</div>
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "#FFF" }}>{step.action}</div>
-                      <div style={{ fontSize: 10, color: "#8AACCA", lineHeight: 1.6, marginTop: 2 }}>{step.detail}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: palette.textOnCard }}>{step.action}</div>
+                      <div style={{ fontSize: 10, color: palette.textOption, lineHeight: 1.6, marginTop: 2 }}>{step.detail}</div>
                     </div>
                   </div>
                 ))}
@@ -2142,7 +2213,7 @@ export default function WarfarinCalculator() {
                       preopRisk === "moderate" ? "⚡ พิจารณา Bridging เป็นรายๆ ไป (Moderate risk)" :
                         "✅ ไม่แนะนำ Bridge (Low thromboembolic risk)"}
                   </div>
-                  <div style={{ fontSize: 11, color: "#AAB8C5", lineHeight: 1.8 }}>
+                  <div style={{ fontSize: 11, color: palette.textHint, lineHeight: 1.8 }}>
                     {preopRisk === "high" && (<>
                       • <b>Enoxaparin 1 mg/kg SC q12h</b> (therapeutic dose)<br />
                       • เริ่ม Day −3, หยุด 24 ชม. ก่อนผ่าตัด<br />
@@ -2183,8 +2254,8 @@ export default function WarfarinCalculator() {
                   background: `${d.color}08`, border: `1px solid ${d.color}20`,
                 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: d.color }}>{d.label}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "#FFF", marginTop: 2 }}>{d.dose}</div>
-                  <div style={{ fontSize: 10, color: "#6A8AAB", marginTop: 2 }}>{d.note}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: palette.textOnCard, marginTop: 2 }}>{d.dose}</div>
+                  <div style={{ fontSize: 10, color: palette.textTertiary, marginTop: 2 }}>{d.note}</div>
                 </div>
               ))}
             </div>
@@ -2193,7 +2264,7 @@ export default function WarfarinCalculator() {
           {/* Key Points */}
           <Card style={{ marginTop: 12 }}>
             <Label icon="📌" text="จุดสำคัญ" />
-            <div style={{ fontSize: 11, color: "#AAB8C5", lineHeight: 2 }}>
+            <div style={{ fontSize: 11, color: palette.textHint, lineHeight: 2 }}>
               <b style={{ color: "#EF5350" }}>⚡ หลักการใหม่ (CHEST 2022):</b><br />
               • Bridge <b>เพิ่มเสี่ยง major bleeding 2-4 เท่า</b> โดยไม่ลด thromboembolism ในคนส่วนใหญ่<br />
               • Bridge เฉพาะ <b>high thromboembolic risk</b> เท่านั้น<br />
@@ -2222,8 +2293,8 @@ export default function WarfarinCalculator() {
               placeholder="พิมพ์ชื่อยา เช่น amiodarone, omeprazole, แอสไพริน..."
               style={{
                 width: "100%", padding: "10px 14px", borderRadius: 12,
-                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)",
-                color: "#FFF", fontFamily: "inherit", fontSize: 14,
+                background: palette.formFieldBg, border: palette.formFieldBorder,
+                color: palette.inputColor, fontFamily: "inherit", fontSize: 14,
                 outline: "none",
               }}
             />
@@ -2232,7 +2303,7 @@ export default function WarfarinCalculator() {
             {drugSearch.trim() && (
               <div style={{ marginTop: 8, maxHeight: 300, overflowY: "auto" }}>
                 {filteredDrugs.length === 0 ? (
-                  <div style={{ padding: 12, textAlign: "center", color: "#5A7A9A", fontSize: 13 }}>
+                  <div style={{ padding: 12, textAlign: "center", color: palette.textSecondary, fontSize: 13 }}>
                     ไม่พบยา "{drugSearch}" — ลองพิมพ์ชื่อสามัญ/ชื่อการค้า
                   </div>
                 ) : (
@@ -2254,13 +2325,13 @@ export default function WarfarinCalculator() {
                           background: effColor,
                         }} />
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: "#E0E8F0" }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: palette.textOnCard }}>
                             {drug.generic}
-                            <span style={{ fontWeight: 400, color: "#6A8AAB", marginLeft: 6, fontSize: 11 }}>
+                            <span style={{ fontWeight: 400, color: palette.textTertiary, marginLeft: 6, fontSize: 11 }}>
                               ({drug.brand})
                             </span>
                           </div>
-                          <div style={{ fontSize: 11, color: "#5A7A9A" }}>{drug.thaiName} • {drug.category}</div>
+                          <div style={{ fontSize: 11, color: palette.textSecondary }}>{drug.thaiName} • {drug.category}</div>
                         </div>
                         <span style={{
                           fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 5,
@@ -2349,16 +2420,16 @@ export default function WarfarinCalculator() {
                   }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
                       <div>
-                        <div style={{ fontSize: 14, fontWeight: 800, color: "#FFF" }}>
+                        <div style={{ fontSize: 14, fontWeight: 800, color: palette.textOnCard }}>
                           {drug.generic}
-                          <span style={{ fontWeight: 400, color: "#6A8AAB", marginLeft: 6, fontSize: 11 }}>
+                          <span style={{ fontWeight: 400, color: palette.textTertiary, marginLeft: 6, fontSize: 11 }}>
                             ({drug.brand})
                           </span>
                         </div>
-                        <div style={{ fontSize: 11, color: "#5A7A9A" }}>{drug.thaiName} • {drug.category}</div>
+                        <div style={{ fontSize: 11, color: palette.textSecondary }}>{drug.thaiName} • {drug.category}</div>
                       </div>
                       <button onClick={() => toggleDrug(drug)} style={{
-                        background: "none", border: "none", color: "#5A7A9A", cursor: "pointer",
+                        background: "none", border: "none", color: palette.textSecondary, cursor: "pointer",
                         fontSize: 16, padding: 4,
                       }}>✕</button>
                     </div>
@@ -2387,11 +2458,11 @@ export default function WarfarinCalculator() {
                     </div>
 
                     {/* Details */}
-                    <div style={{ fontSize: 11, lineHeight: 1.8, color: "#AAB8C5" }}>
-                      <div><b style={{ color: "#90CAF9" }}>💊 คำแนะนำ:</b> <span style={{ color: "#FFF" }}>{drug.adjust}</span></div>
-                      <div><b style={{ color: "#90CAF9" }}>⚙️ กลไก:</b> {drug.mechanism}</div>
-                      <div><b style={{ color: "#90CAF9" }}>⏱️ ระยะเกิดผล:</b> {drug.onset}</div>
-                      {drug.note && <div><b style={{ color: "#90CAF9" }}>📝 หมายเหตุ:</b> <span style={{ color: "#FFD54F" }}>{drug.note}</span></div>}
+                    <div style={{ fontSize: 11, lineHeight: 1.8, color: palette.textHint }}>
+                      <div><b style={{ color: palette.accent }}>💊 คำแนะนำ:</b> <span style={{ color: palette.textOnCard }}>{drug.adjust}</span></div>
+                      <div><b style={{ color: palette.accent }}>⚙️ กลไก:</b> {drug.mechanism}</div>
+                      <div><b style={{ color: palette.accent }}>⏱️ ระยะเกิดผล:</b> {drug.onset}</div>
+                      {drug.note && <div><b style={{ color: palette.accent }}>📝 หมายเหตุ:</b> <span style={{ color: "#FFD54F" }}>{drug.note}</span></div>}
                     </div>
                   </div>
                 );
@@ -2421,12 +2492,12 @@ export default function WarfarinCalculator() {
                   <summary style={{
                     padding: "8px 10px", borderRadius: 8, cursor: "pointer",
                     background: "rgba(255,255,255,0.03)", fontSize: 13, fontWeight: 600,
-                    color: "#90CAF9", listStyle: "none",
+                    color: palette.accent, listStyle: "none",
                     display: "flex", alignItems: "center", gap: 6,
                   }}>
-                    <span style={{ fontSize: 10, color: "#4A5A6A" }}>▸</span>
+                    <span style={{ fontSize: 10, color: palette.textMuted }}>▸</span>
                     {cat}
-                    <span style={{ fontSize: 10, color: "#5A7A9A", fontWeight: 400 }}>({drugs.length})</span>
+                    <span style={{ fontSize: 10, color: palette.textSecondary, fontWeight: 400 }}>({drugs.length})</span>
                   </summary>
                   <div style={{ padding: "4px 0 4px 16px" }}>
                     {drugs.map(drug => {
@@ -2444,7 +2515,7 @@ export default function WarfarinCalculator() {
                         }}>
                           <span style={{ width: 6, height: 6, borderRadius: 3, background: effColor, flexShrink: 0 }} />
                           <span style={{ fontSize: 12, color: "#C0D0E0", flex: 1 }}>
-                            {drug.generic} <span style={{ color: "#5A7A9A" }}>({drug.thaiName})</span>
+                            {drug.generic} <span style={{ color: palette.textSecondary }}>({drug.thaiName})</span>
                           </span>
                           <span style={{ fontSize: 9, color: effColor, fontWeight: 700 }}>
                             {drug.effect === "increase" ? "↑INR" :
@@ -2471,12 +2542,12 @@ export default function WarfarinCalculator() {
                 { color: "#E040FB", icon: "🟣", label: "⚡ เพิ่มเสี่ยงเลือดออก (INR อาจไม่เปลี่ยน)" },
                 { color: "#66BB6A", icon: "🟢", label: "✓ ปลอดภัย / interaction น้อยมาก" },
               ].map(item => (
-                <div key={item.icon} style={{ display: "flex", alignItems: "center", gap: 8, color: "#AAB8C5" }}>
+                <div key={item.icon} style={{ display: "flex", alignItems: "center", gap: 8, color: palette.textHint }}>
                   <span style={{ fontSize: 14 }}>{item.icon}</span>
                   <span>{item.label}</span>
                 </div>
               ))}
-              <div style={{ marginTop: 6, fontSize: 10, color: "#5A7A9A", lineHeight: 1.6 }}>
+              <div style={{ marginTop: 6, fontSize: 10, color: palette.textSecondary, lineHeight: 1.6 }}>
                 <b>FAB-4:</b> ยา 4 ตัวที่ interaction แรงที่สุดกับ warfarin = <b style={{ color: "#EF5350" }}>Fluconazole, Amiodarone, Bactrim (TMP-SMX), Flagyl (Metronidazole)</b>
               </div>
             </div>
@@ -2514,7 +2585,7 @@ export default function WarfarinCalculator() {
 }
 
 /* ─── Shared Components ─── */
-function recBox(c) {
+function recBox(c, textColor) {
   return {
     padding: "10px 12px",
     borderRadius: 10,
@@ -2522,7 +2593,7 @@ function recBox(c) {
     background: c + "10",
     border: "1px solid " + c + "30",
     fontSize: 12,
-    color: "#E0E8F0",
+    color: textColor || "#E0E8F0",
     lineHeight: 2,
   };
 }
@@ -2568,17 +2639,21 @@ const PILL_COLORS = {
 
 function PillDot({ mg, on }) {
   const c = PILL_COLORS[mg] || PILL_COLORS[3];
+  const t = useContext(ThemeContext);
+  const offFill = t?.pillDotOffFill ?? "#2A3444";
+  const offStroke = t?.pillDotOffStroke ?? "#5c6b7a";
+  const offText = t?.textMuted ?? "#A8B8C8";
   return (
     <svg width="32" height="32" viewBox="0 0 32 32" style={{ display: "block", margin: "0 auto" }}>
       {/* Pill shape - rounded rectangle */}
       <rect x="4" y="6" width="24" height="20" rx="10" ry="10"
-        fill={on ? c.fill : "#2A3444"} stroke={on ? c.stroke : "#3A4A5A"} strokeWidth="2" />
+        fill={on ? c.fill : offFill} stroke={on ? c.stroke : offStroke} strokeWidth="2" />
       {/* Score line */}
-      <line x1="16" y1="8" x2="16" y2="24" stroke={on ? c.stroke : "#3A4A5A"} strokeWidth="1" opacity="0.5" />
+      <line x1="16" y1="8" x2="16" y2="24" stroke={on ? c.stroke : offStroke} strokeWidth="1" opacity="0.5" />
       {/* mg text */}
       <text x="16" y="19" textAnchor="middle" fontSize="9" fontWeight="800"
         fontFamily="'JetBrains Mono', monospace"
-        fill={on ? c.text : "#4A5A6A"}>{mg}</text>
+        fill={on ? c.text : offText}>{mg}</text>
     </svg>
   );
 }
@@ -2613,13 +2688,16 @@ function PillIcon({ mg, half, size = 22 }) {
 }
 
 function PillComboVisual({ combo }) {
+  const t = useContext(ThemeContext);
+  const sec = t?.textSecondary ?? "#546e7a";
+  const mut = t?.textMuted ?? "#546e7a";
   if (!combo.possible) return <span style={{ fontSize: 11, color: "#EF5350" }}>❌</span>;
-  if (combo.parts.length === 0) return <span style={{ fontSize: 11, color: "#5A7A9A" }}>— หยุดยา</span>;
+  if (combo.parts.length === 0) return <span style={{ fontSize: 11, color: sec }}>— หยุดยา</span>;
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 3, flexWrap: "wrap" }}>
       {combo.parts.map((p, pi) => (
         <span key={pi} style={{ display: "inline-flex", alignItems: "center", gap: 1 }}>
-          {pi > 0 && <span style={{ color: "#4A5A6A", fontSize: 10, margin: "0 2px" }}>+</span>}
+          {pi > 0 && <span style={{ color: mut, fontSize: 10, margin: "0 2px" }}>+</span>}
           {Array.from({ length: p.n }).map((_, qi) => (
             <PillIcon key={qi} mg={p.mg} half={p.half} size={20} />
           ))}
@@ -2642,11 +2720,14 @@ function PillComboText({ combo }) {
 }
 
 function StepBtn({ label, onClick, small }) {
+  const t = useContext(ThemeContext);
+  const bg = small ? (t?.stepBtnBgSmall ?? "rgba(255,255,255,0.04)") : (t?.stepBtnBg ?? "rgba(255,255,255,0.07)");
+  const col = t?.stepBtnColor ?? "#90CAF9";
   return (
     <button onClick={onClick} style={{
       width: small ? 32 : 40, height: small ? 32 : 40, borderRadius: 10, border: "none",
-      background: small ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.06)",
-      color: "#90CAF9", fontSize: small ? 14 : 18, fontWeight: 700, cursor: "pointer",
+      background: bg,
+      color: col, fontSize: small ? 14 : 18, fontWeight: 700, cursor: "pointer",
       fontFamily: "'JetBrains Mono', monospace",
     }}>{label}</button>
   );
