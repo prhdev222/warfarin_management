@@ -13,7 +13,9 @@ const THEME_PALETTES = {
     homeTileInactive: "rgba(255,255,255,0.04)",
     homeTileText: "#E0E8F0",
     homeDesc: "#90A4AE",
-    titleGradient: "linear-gradient(90deg, #FFF, #90CAF9)",
+    titleGradient: "linear-gradient(90deg, #E3F2FD, #90CAF9)",
+    /** ใช้แทน gradient text ในโหมดมืด — กันหาย/บล็อกขาวบางเบราว์เซอร์ */
+    headerTitleSolid: "#E8F4FF",
     subtitle: "#7EB3DB",
     fontBarBg: "rgba(3,13,25,0.6)",
     fontBtnActive: "rgba(144,202,249,0.9)",
@@ -46,7 +48,7 @@ const THEME_PALETTES = {
     textOnCard: "#F2F6FA",
     textEmphasis: "#FFFFFF",
     textSecondary: "#C5D3E0",
-    textMuted: "#B0BEC8",
+    textMuted: "#C8D8E4",
     textTertiary: "#B8C5D4",
     textOption: "#B8CEE8",
     textHint: "#A8B0BC",
@@ -89,6 +91,7 @@ const THEME_PALETTES = {
     homeTileText: "#1a2332",
     homeDesc: "#546e7a",
     titleGradient: "linear-gradient(90deg, #0d47a1, #1976d2)",
+    headerTitleSolid: "#0d47a1",
     subtitle: "#37474f",
     fontBarBg: "rgba(255,255,255,0.85)",
     fontBtnActive: "rgba(25,118,210,0.95)",
@@ -727,11 +730,17 @@ export default function WarfarinCalculator() {
                 cursor: "pointer",
               }}
             >
-              <h1 style={{
+              <h1 style={theme === "light" ? {
                 margin: 0, fontSize: 19, fontWeight: 800,
                 background: palette.titleGradient,
-                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              }}>Warfarin Dose Planner</h1>
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              } : {
+                margin: 0, fontSize: 19, fontWeight: 800,
+                color: palette.headerTitleSolid,
+              }}
+              >Warfarin Dose Planner</h1>
               <p style={{ margin: 0, fontSize: 11, color: palette.subtitle, fontWeight: 300 }}>
                 คำนวณอัตโนมัติ • กระจาย dose ให้สม่ำเสมอ • นับเม็ดยา
               </p>
@@ -886,16 +895,24 @@ export default function WarfarinCalculator() {
                       flex: 1, padding: "8px 2px", borderRadius: 12, cursor: "pointer",
                       border: `2px solid ${on ? TC[mg] : palette.pillBorderOff}`,
                       background: on ? `${TC[mg]}15` : palette.pillBgOff,
-                      color: on ? "#FFF" : palette.textMuted, fontFamily: "inherit",
+                      /* โหมดสว่าง: ใช้สีเข้มจากเม็ดยา — ห้ามขาวบนพื้นสีอ่อน */
+                      color: on ? (theme === "light" ? pc.text : "#FFFFFF") : palette.textMuted,
+                      fontFamily: "inherit",
                       fontWeight: 700, fontSize: 13, transition: "all 0.2s",
                       display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
                     }}>
                       <PillDot mg={mg} on={on} />
                       <span>{mg} mg</span>
-                      <span style={{ fontSize: 9, fontWeight: 400, color: on ? pc.stroke : palette.textMuted }}>
+                      <span style={{
+                        fontSize: 9, fontWeight: 400,
+                        color: on ? (theme === "light" ? pc.text : "#E3F2FD") : palette.textMuted,
+                      }}>
                         {pc.label}
                       </span>
-                      <span style={{ fontSize: 9, fontWeight: 400, opacity: .7 }}>{on ? "✓ มี" : "ไม่มี"}</span>
+                      <span style={{
+                        fontSize: 9, fontWeight: 400, opacity: theme === "light" && on ? 1 : 0.85,
+                        color: on ? (theme === "light" ? pc.text : "#FFFFFF") : "inherit",
+                      }}>{on ? "✓ มี" : "ไม่มี"}</span>
                     </button>
                   );
                 })}
