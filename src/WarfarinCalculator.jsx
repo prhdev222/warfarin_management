@@ -442,6 +442,62 @@ const tagStyle = (c) => ({
   border: `1px solid ${c}40`,
 });
 
+/** หัวข้อพับได้ — หน้าวางแผน */
+function PlanCollapsible({ title, icon, open, onToggle, palette, children, style: wrapStyle }) {
+  return (
+    <div style={{
+      borderRadius: 12,
+      border: palette.nestedPanelBorder,
+      marginBottom: 8,
+      overflow: "hidden",
+      background: palette.nestedPanelBg,
+      ...wrapStyle,
+    }}>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 10,
+          padding: "12px 14px",
+          border: "none",
+          cursor: "pointer",
+          background: open ? "rgba(100,181,246,0.07)" : "transparent",
+          fontFamily: "inherit",
+          textAlign: "left",
+        }}
+      >
+        <span style={{
+          fontSize: 12,
+          fontWeight: 800,
+          color: palette.labelDefault,
+          letterSpacing: 0.35,
+          textTransform: "uppercase",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          lineHeight: 1.35,
+        }}>
+          <span aria-hidden style={{ fontSize: 17 }}>{icon}</span>
+          {title}
+        </span>
+        <span style={{ color: palette.accent, fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
+          {open ? "ซ่อน ▲" : "แสดง ▼"}
+        </span>
+      </button>
+      {open && (
+        <div style={{ padding: "0 14px 14px", borderTop: palette.nestedPanelBorder }}>
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── Main Component ─── */
 export default function WarfarinCalculator() {
   const [tablets, setTablets] = useState([3, 5]);
@@ -475,6 +531,18 @@ export default function WarfarinCalculator() {
   /** วางแผน: คำนวณเป้าหมายจากยาเดิม (mg/สัปดาห์) ± % (ไม่บังคอกรอก) */
   const [pctBaseWeekly, setPctBaseWeekly] = useState("");
   const [pctDelta, setPctDelta] = useState("");
+  /** พับ/ขยายส่วนหน้าวางแผน */
+  const [planSections, setPlanSections] = useState({
+    tablets: true,
+    target: true,
+    pct: false,
+    quick: false,
+    options: true,
+    schedule: true,
+  });
+  const togglePlanSection = useCallback((key) => {
+    setPlanSections(s => ({ ...s, [key]: !s[key] }));
+  }, []);
 
   const fontScale = fontMode === "normal" ? 1 : fontMode === "large" ? 1.18 : 1.3;
 
@@ -637,6 +705,39 @@ export default function WarfarinCalculator() {
 
   // Real warfarin tablet colors
   const TC = { 1: "#BDBDBD", 2: "#FF8C00", 3: "#4285F4", 4: "#FFD600", 5: "#EC407A" };
+
+  const renderTabletMgRow = () => (
+    <div style={{ display: "flex", gap: 6 }}>
+      {ALL_TABLETS.map(mg => {
+        const on = tablets.includes(mg);
+        const pc = PILL_COLORS[mg];
+        return (
+          <button key={mg} onClick={() => toggleTab(mg)} style={{
+            flex: 1, padding: "8px 2px", borderRadius: 12, cursor: "pointer",
+            border: `2px solid ${on ? TC[mg] : palette.pillBorderOff}`,
+            background: on ? `${TC[mg]}15` : palette.pillBgOff,
+            color: on ? (theme === "light" ? pc.text : "#FFFFFF") : palette.textMuted,
+            fontFamily: "inherit",
+            fontWeight: 700, fontSize: 13, transition: "all 0.2s",
+            display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
+          }}>
+            <PillDot mg={mg} on={on} />
+            <span>{mg} mg</span>
+            <span style={{
+              fontSize: 9, fontWeight: 400,
+              color: on ? (theme === "light" ? pc.text : "#E3F2FD") : palette.textMuted,
+            }}>
+              {pc.label}
+            </span>
+            <span style={{
+              fontSize: 9, fontWeight: 400, opacity: theme === "light" && on ? 1 : 0.85,
+              color: on ? (theme === "light" ? pc.text : "#FFFFFF") : "inherit",
+            }}>{on ? "✓ มี" : "ไม่มี"}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
 
   return (
     <ThemeContext.Provider value={palette}>
@@ -904,39 +1005,24 @@ export default function WarfarinCalculator() {
         {/* Tablet Select — show onlyในหน้าจอ (ไม่พิมพ์) */}
         {(tab === "plan" || tab === "count") && (
           <div className="no-print">
-            <Card>
-              <Label icon="🏥" text="เม็ดยาที่มีในโรงพยาบาล" />
-              <div style={{ display: "flex", gap: 6 }}>
-                {ALL_TABLETS.map(mg => {
-                  const on = tablets.includes(mg);
-                  const pc = PILL_COLORS[mg];
-                  return (
-                    <button key={mg} onClick={() => toggleTab(mg)} style={{
-                      flex: 1, padding: "8px 2px", borderRadius: 12, cursor: "pointer",
-                      border: `2px solid ${on ? TC[mg] : palette.pillBorderOff}`,
-                      background: on ? `${TC[mg]}15` : palette.pillBgOff,
-                      /* โหมดสว่าง: ใช้สีเข้มจากเม็ดยา — ห้ามขาวบนพื้นสีอ่อน */
-                      color: on ? (theme === "light" ? pc.text : "#FFFFFF") : palette.textMuted,
-                      fontFamily: "inherit",
-                      fontWeight: 700, fontSize: 13, transition: "all 0.2s",
-                      display: "flex", flexDirection: "column", alignItems: "center", gap: 1,
-                    }}>
-                      <PillDot mg={mg} on={on} />
-                      <span>{mg} mg</span>
-                      <span style={{
-                        fontSize: 9, fontWeight: 400,
-                        color: on ? (theme === "light" ? pc.text : "#E3F2FD") : palette.textMuted,
-                      }}>
-                        {pc.label}
-                      </span>
-                      <span style={{
-                        fontSize: 9, fontWeight: 400, opacity: theme === "light" && on ? 1 : 0.85,
-                        color: on ? (theme === "light" ? pc.text : "#FFFFFF") : "inherit",
-                      }}>{on ? "✓ มี" : "ไม่มี"}</span>
-                    </button>
-                  );
-                })}
-              </div>
+            <Card style={{ padding: tab === "plan" ? 0 : undefined, overflow: "hidden" }}>
+              {tab === "plan" ? (
+                <PlanCollapsible
+                  title="เม็ดยาที่มีในโรงพยาบาล"
+                  icon="🏥"
+                  open={planSections.tablets}
+                  onToggle={() => togglePlanSection("tablets")}
+                  palette={palette}
+                  style={{ marginBottom: 0, border: "none", borderRadius: 16 }}
+                >
+                  <div style={{ paddingTop: 4 }}>{renderTabletMgRow()}</div>
+                </PlanCollapsible>
+              ) : (
+                <>
+                  <Label icon="🏥" text="เม็ดยาที่มีในโรงพยาบาล" />
+                  {renderTabletMgRow()}
+                </>
+              )}
             </Card>
           </div>
         )}
@@ -944,9 +1030,15 @@ export default function WarfarinCalculator() {
         {/* ═══════════ PLAN TAB ═══════════ */}
         {tab === "plan" && (<>
 
-          {/* Target Dose */}
-          <Card>
-            <Label icon="🎯" text="เป้าหมายขนาดยา" />
+          {/* Target Dose — พับเป็นส่วนๆ */}
+          <Card style={{ padding: "12px 10px" }}>
+            <PlanCollapsible
+              title="เป้าหมายขนาดยา"
+              icon="🎯"
+              open={planSections.target}
+              onToggle={() => togglePlanSection("target")}
+              palette={palette}
+            >
             <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
               {["weekly", "daily"].map(m => (
                 <button key={m} onClick={() => {
@@ -965,7 +1057,6 @@ export default function WarfarinCalculator() {
               ))}
             </div>
 
-            {/* Stepper */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 10 }}>
               <StepBtn label="−−" onClick={() => adjustVal(inputMode === "daily" ? -1 : -7)} />
               <StepBtn label="−" onClick={() => adjustVal(inputMode === "daily" ? -0.5 : -0.5)} small />
@@ -998,12 +1089,15 @@ export default function WarfarinCalculator() {
                 : <span>= เฉลี่ย <b>{(effWeekly / 7).toFixed(2)}</b> mg/วัน</span>
               }
             </div>
+            </PlanCollapsible>
 
-            {/* เป้าหมายจาก % เพิ่ม/ลด (ไม่บังคับ) */}
-            <div style={{ marginTop: 14, padding: "10px 12px", borderRadius: 12, background: palette.nestedPanelBg, border: palette.nestedPanelBorder }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: palette.textSecondary, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>
-                📐 ตั้งเป้าหมายจากยาเดิม ± % (ไม่บังคับ)
-              </div>
+            <PlanCollapsible
+              title="ตั้งเป้าจากยาเดิม ± % (ไม่บังคับ)"
+              icon="📐"
+              open={planSections.pct}
+              onToggle={() => togglePlanSection("pct")}
+              palette={palette}
+            >
               <div style={{ fontSize: 10, color: palette.textMuted, marginBottom: 10, lineHeight: 1.55 }}>
                 กรอกขนาด warfarin <b>เดิมต่อสัปดาห์</b> (mg/wk) และ % ที่ต้องการ <b>เพิ่ม</b> (เช่น 10) หรือ <b>ลด</b> (เช่น −15) — ระบบคำนวณ mg/สัปดาห์ใหม่แล้วกดนำไปเป็นเป้าหมายได้
               </div>
@@ -1078,11 +1172,16 @@ export default function WarfarinCalculator() {
                   กรอกตัวเลขยาเดิม (&gt; 0) และ % ให้ครบเพื่อคำนวณ (หรือเว้นช่องว่างทั้งคู่ถ้าไม่ใช้)
                 </div>
               )}
-            </div>
+            </PlanCollapsible>
 
-            {/* Quick adjust — Fixed mg based on available tablets */}
+            <PlanCollapsible
+              title={`ปรับเร็ว — เม็ดยาที่มี (${tablets.map(t => `${t}mg`).join(", ")})`}
+              icon="⚡"
+              open={planSections.quick}
+              onToggle={() => togglePlanSection("quick")}
+              palette={palette}
+            >
             {(() => {
-              // Generate increments from available tablets: half & whole, ×1 ×2 ×3
               const units = [...new Set(tablets.flatMap(t => [t / 2, t]))].sort((a, b) => a - b);
               const weeklySteps = [...new Set(
                 units.flatMap(u => [u, u * 2, u * 3])
@@ -1091,10 +1190,7 @@ export default function WarfarinCalculator() {
               const steps = inputMode === "daily" ? dailySteps : weeklySteps;
 
               return (
-                <div style={{ marginTop: 12, padding: "10px 12px", borderRadius: 12, background: palette.nestedPanelBg, border: palette.nestedPanelBorder }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: palette.textSecondary, marginBottom: 6, textTransform: "uppercase", letterSpacing: .5 }}>
-                    ⚡ ปรับเร็ว — ตามเม็ดยาที่มี ({tablets.map(t => `${t}mg`).join(", ")})
-                  </div>
+                <div>
                   <div style={{ fontSize: 9, color: palette.textMuted, marginBottom: 8 }}>
                     {inputMode === "daily" ? "mg/วัน" : "mg/สัปดาห์"} • ½เม็ด = {tablets.map(t => `${t/2}`).join(", ")} mg
                   </div>
@@ -1209,11 +1305,18 @@ export default function WarfarinCalculator() {
                 </div>
               );
             })()}
+            </PlanCollapsible>
           </Card>
 
           {/* Options with preference selector */}
           <Card style={{ marginTop: 12 }}>
-            <Label icon="📊" text={`แผนจัดยาแนะนำ (${effWeekly} mg/wk)`} />
+            <PlanCollapsible
+              title={`แผนจัดยาแนะนำ (${effWeekly} mg/wk)`}
+              icon="📊"
+              open={planSections.options}
+              onToggle={() => togglePlanSection("options")}
+              palette={palette}
+            >
 
             {/* Preference selector */}
             <div style={{ marginBottom: 10 }}>
@@ -1324,11 +1427,18 @@ export default function WarfarinCalculator() {
                 })}
               </div>
             )}
+            </PlanCollapsible>
           </Card>
 
           {/* Full schedule detail */}
           <Card style={{ marginTop: 12 }}>
-            <Label icon="📅" text="ตารางยารายวัน (แผนที่เลือก)" />
+            <PlanCollapsible
+              title="ตารางยารายวัน (แผนที่เลือก)"
+              icon="📅"
+              open={planSections.schedule}
+              onToggle={() => togglePlanSection("schedule")}
+              palette={palette}
+            >
             <div className="no-print" style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 8, flexWrap: "wrap" }}>
               <div style={{ fontSize: 11, color: palette.textTertiary, fontWeight: 600 }}>เลื่อนวันให้คนไข้เลือก:</div>
               <button onClick={() => setScheduleOffset(o => (o + 6) % 7)} style={{
@@ -1545,6 +1655,7 @@ export default function WarfarinCalculator() {
                 </div>
               </div>
             </div>
+            </PlanCollapsible>
           </Card>
         </>)}
 
