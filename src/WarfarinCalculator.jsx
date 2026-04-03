@@ -472,6 +472,9 @@ export default function WarfarinCalculator() {
   const [hasBleeding, setHasBleeding] = useState("none");
   const [preopRisk, setPreopRisk] = useState("low");
   const [bleedRisk, setBleedRisk] = useState("low_mod");
+  /** วางแผน: คำนวณเป้าหมายจากยาเดิม (mg/สัปดาห์) ± % (ไม่บังคอกรอก) */
+  const [pctBaseWeekly, setPctBaseWeekly] = useState("");
+  const [pctDelta, setPctDelta] = useState("");
 
   const fontScale = fontMode === "normal" ? 1 : fontMode === "large" ? 1.18 : 1.3;
 
@@ -526,6 +529,16 @@ export default function WarfarinCalculator() {
   const effWeekly = inputMode === "daily"
     ? Math.round(dailyInput * 7 * 10) / 10
     : weeklyTarget;
+
+  /** ผล mg/สัปดาห์ จากยาเดิม × (1 ± %) — ใช้เมื่อกรอกตัวเลขครบ */
+  const pctDerivedWeekly = useMemo(() => {
+    const base = parseFloat(String(pctBaseWeekly).replace(",", "."));
+    const pct = parseFloat(String(pctDelta).replace(",", "."));
+    if (!Number.isFinite(base) || base <= 0 || !Number.isFinite(pct)) return null;
+    const w = base * (1 + pct / 100);
+    if (!Number.isFinite(w) || w <= 0) return null;
+    return Math.round(w * 10) / 10;
+  }, [pctBaseWeekly, pctDelta]);
 
   const allOptions = useMemo(() => generateOptions(effWeekly, tablets), [effWeekly, tablets]);
 
@@ -614,6 +627,13 @@ export default function WarfarinCalculator() {
     else setWeeklyTarget(p => Math.max(0, Math.round((p + delta) * 10) / 10));
     setSelIdx(0);
   };
+
+  const applyPctDerivedTarget = useCallback(() => {
+    if (pctDerivedWeekly == null) return;
+    setWeeklyTarget(pctDerivedWeekly);
+    setDailyInput(Math.round((pctDerivedWeekly / 7) * 10) / 10);
+    setSelIdx(0);
+  }, [pctDerivedWeekly]);
 
   // Real warfarin tablet colors
   const TC = { 1: "#BDBDBD", 2: "#FF8C00", 3: "#4285F4", 4: "#FFD600", 5: "#EC407A" };
@@ -977,6 +997,87 @@ export default function WarfarinCalculator() {
                 ? <span>= <b>{effWeekly}</b> mg/สัปดาห์</span>
                 : <span>= เฉลี่ย <b>{(effWeekly / 7).toFixed(2)}</b> mg/วัน</span>
               }
+            </div>
+
+            {/* เป้าหมายจาก % เพิ่ม/ลด (ไม่บังคับ) */}
+            <div style={{ marginTop: 14, padding: "10px 12px", borderRadius: 12, background: palette.nestedPanelBg, border: palette.nestedPanelBorder }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: palette.textSecondary, marginBottom: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                📐 ตั้งเป้าหมายจากยาเดิม ± % (ไม่บังคับ)
+              </div>
+              <div style={{ fontSize: 10, color: palette.textMuted, marginBottom: 10, lineHeight: 1.55 }}>
+                กรอกขนาด warfarin <b>เดิมต่อสัปดาห์</b> (mg/wk) และ % ที่ต้องการ <b>เพิ่ม</b> (เช่น 10) หรือ <b>ลด</b> (เช่น −15) — ระบบคำนวณ mg/สัปดาห์ใหม่แล้วกดนำไปเป็นเป้าหมายได้
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "flex-end" }}>
+                <div style={{ flex: "1 1 120px", minWidth: 100 }}>
+                  <div style={{ fontSize: 10, color: palette.textTertiary, marginBottom: 4 }}>ยาเดิม (mg/สัปดาห์)</div>
+                  <input
+                    type="number"
+                    step={0.5}
+                    min={0}
+                    value={pctBaseWeekly}
+                    onChange={e => setPctBaseWeekly(e.target.value)}
+                    placeholder="เช่น 21"
+                    style={{
+                      width: "100%", padding: "8px 10px", borderRadius: 10,
+                      border: palette.inputBorder,
+                      background: palette.inputBg,
+                      color: palette.inputColor,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+                <div style={{ flex: "1 1 100px", minWidth: 88 }}>
+                  <div style={{ fontSize: 10, color: palette.textTertiary, marginBottom: 4 }}>เปลี่ยน (%)</div>
+                  <input
+                    type="number"
+                    step={0.5}
+                    value={pctDelta}
+                    onChange={e => setPctDelta(e.target.value)}
+                    placeholder="+10 หรือ −15"
+                    style={{
+                      width: "100%", padding: "8px 10px", borderRadius: 10,
+                      border: palette.inputBorder,
+                      background: palette.inputBg,
+                      color: palette.inputColor,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 14,
+                    }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  disabled={pctDerivedWeekly == null}
+                  onClick={applyPctDerivedTarget}
+                  style={{
+                    flex: "1 1 140px",
+                    padding: "10px 12px",
+                    borderRadius: 10,
+                    border: "none",
+                    cursor: pctDerivedWeekly == null ? "not-allowed" : "pointer",
+                    opacity: pctDerivedWeekly == null ? 0.45 : 1,
+                    background: pctDerivedWeekly == null ? palette.segmentInactiveBg : "linear-gradient(135deg, #1976d2, #42a5f5)",
+                    color: pctDerivedWeekly == null ? palette.textMuted : "#fff",
+                    fontWeight: 700,
+                    fontSize: 12,
+                    fontFamily: "inherit",
+                  }}
+                >
+                  ใช้เป็นเป้าหมาย
+                </button>
+              </div>
+              {pctDerivedWeekly != null && (
+                <div style={{ marginTop: 10, fontSize: 12, color: palette.textOnCard, lineHeight: 1.6 }}>
+                  สูตร: ยาเดิม × (1 + %/100) →{" "}
+                  <b style={{ color: palette.accent }}>{pctDerivedWeekly} mg/สัปดาห์</b>
+                  {" "}(≈ เฉลี่ย <b>{(pctDerivedWeekly / 7).toFixed(2)}</b> mg/วัน)
+                </div>
+              )}
+              {(pctBaseWeekly !== "" || pctDelta !== "") && pctDerivedWeekly == null && (
+                <div style={{ marginTop: 8, fontSize: 10, color: palette.headingMuted }}>
+                  กรอกตัวเลขยาเดิม (&gt; 0) และ % ให้ครบเพื่อคำนวณ (หรือเว้นช่องว่างทั้งคู่ถ้าไม่ใช้)
+                </div>
+              )}
             </div>
 
             {/* Quick adjust — Fixed mg based on available tablets */}
